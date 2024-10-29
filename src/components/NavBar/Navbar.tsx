@@ -2,7 +2,7 @@ import { Button } from "../ui/button";
 import MainNav from "./MainNav";
 import MobileNav from "./MobileNav";
 import { cn } from "./../../lib/utils";
-import logo from "./../../public/image/tumaini hikers bg-01.png";
+import logo from "./../../../public/image/tumaini hikers bg-01.png";
 import Image from "next/image";
 import Link from "next/link";
 

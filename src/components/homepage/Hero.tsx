@@ -1,5 +1,5 @@
 import Image from "next/image";
-import mountain from "./../../public/image/hero.jpg";
+import mountain from "./../../../public/image/hero.jpg";
 import { TypewriterEffectSmooth } from "../ui/typewriter-effect";
 
 const HeroImage = () => {

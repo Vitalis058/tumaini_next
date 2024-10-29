@@ -1,5 +1,5 @@
 import { Calendar, Mountain, SquareLibrary } from "lucide-react";
-import chooseUs from "./../../public/image/tumainiFitnessChooseUs.jpg";
+import chooseUs from "./../../../public/image/tumainiFitnessChooseUs.jpg";
 import Image from "next/image";
 import { FaHiking } from "react-icons/fa";
 

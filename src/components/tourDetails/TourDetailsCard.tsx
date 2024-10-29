@@ -6,7 +6,7 @@ import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@radix-ui/react-separator";
 import { Mail, Phone } from "lucide-react";
-import safaricom from "./../../public/image/Professional Lipa Na Mpesa Banner Flyer (us L - Made with PosterMyWall (4).jpg";
+import safaricom from "./../../../public/image/Professional Lipa Na Mpesa Banner Flyer (us L - Made with PosterMyWall (4).jpg";
 import Image from "next/image";
 import { TourType } from "@/types/types";
 
