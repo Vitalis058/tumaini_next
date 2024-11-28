@@ -1,14 +1,23 @@
-import { FaFacebook } from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa";
-import { FaInstagram } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
+
 import { Card } from "@/components/ui/card";
-import { Separator } from "@radix-ui/react-separator";
-import { Mail, Phone } from "lucide-react";
+import { Calendar1, Check, Mail, MapPin, X } from "lucide-react";
 import safaricom from "./../../../public/image/Professional Lipa Na Mpesa Banner Flyer (us L - Made with PosterMyWall (4).jpg";
 import Image from "next/image";
 import { TourType } from "@/types/types";
+import { Button } from "../ui/button";
+import { Dialog, DialogTrigger } from "../ui/dialog";
+import TourBooking from "./tourBooking";
+import { ScrollArea } from "../ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
+import { cn } from "@/lib/utils";
+import { Badge } from "../ui/badge";
 
 type Props = {
   tour: TourType;
@@ -16,117 +25,169 @@ type Props = {
 
 const TourDetailsCard = ({ tour }: Props) => {
   return (
-    <div className="mt-2 grid gap-8 md:grid-cols-[3fr_2fr]">
+    <div className="mt-2">
       <div className="w-full space-y-3">
-        <AspectRatio
-          ratio={16 / 7}
-          className="relative rounded-md after:absolute after:left-0 after:top-0 after:h-full after:w-full after:rounded-lg after:bg-black after:opacity-[40%] after:content-['']"
-        >
+        <div className="relative h-[50vh] rounded-md after:absolute after:left-0 after:top-0 after:h-full after:w-full after:rounded-lg after:bg-black  after:opacity-[30%] after:content-['']">
           <Image
             src={tour.imageUrl}
             alt=""
             className="h-full w-full overflow-hidden rounded-lg object-cover"
             fill
           />
-          <h1 className="absolute left-[50%] top-[40%] z-[10] w-full -translate-x-[50%] transform px-3 text-center text-base font-semibold uppercase text-white md:text-3xl lg:text-4xl">
-            {tour.name}
-          </h1>
-        </AspectRatio>
-        <div className="flex flex-col gap-3">
-          <div>
-            <h2 className="md:text-lg text-base font-semibold text-gray-600">
-              Summary
-            </h2>
-            <p className=" text-sm">{tour.summary}</p>
-          </div>
+          <div className="absolute left-[50%] top-[40%] z-[10] w-full -translate-x-[50%] transform px-3 text-center text-white flex flex-col justify-center gap-3 items-center">
+            <h1 className="capitalize font-semibold md:text-3xl text-2xl">
+              {tour.name}
+            </h1>
+            <div className="flex flex-col sm:flex-row sm:gap-5 items-center">
+              <span className="flex items-center gap-1">
+                <MapPin className="text-primary" size={20} />
+                <p className="text-base capitalize">{tour.location}</p>
+              </span>
 
-          <div>
-            <h2 className="md:text-lg text-sm font-semibold text-gray-600">
-              Description
-            </h2>
-            <div
-              className="break-word post-content text-sm"
-              dangerouslySetInnerHTML={{ __html: tour && tour.description }}
-            ></div>
+              <span className="flex items-center gap-1">
+                <Calendar1 className="text-primary" size={20} />
+                <p className="text-base capitalize">
+                  {new Date(tour.date).toDateString()}
+                </p>
+              </span>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="space-y-3">
-        <div>
-          <Card className="space-y-3 p-3 md:text-base text-sm">
-            <h1 className="md:text-base text-sm font-semibold text-greenPrimary">
-              Date and Time
-            </h1>
-            <p>{new Date(tour.date).toDateString()}</p>
-            <p>Africa({tour.country})</p>
-          </Card>
+        <div className="justify flex flex-wrap gap-1">
+          <Badge
+            className={cn(
+              tour.level === "child-friendly" && "bg-greenPrimary",
+              tour.level === "intermediate" && "bg-orange-400",
+              tour.level === "advanced" && "bg-red-500"
+            )}
+          >
+            {tour.level}
+          </Badge>
+          <Badge
+            className={cn(
+              tour.hikeType === "day-hike" && "bg-yellow-400",
+              tour.hikeType === "multi-day-hike" && "bg-orange-400"
+            )}
+          >
+            {tour.hikeType}
+          </Badge>
+          <Badge
+            className={cn(
+              tour.difficulty === "easy" && "bg-green-500",
+              tour.difficulty === "moderate" && "bg-yellow-500",
+              tour.difficulty === "advanced" && "bg-orange-400",
+              tour.difficulty === "challenging" && "bg-red-500",
+              tour.difficulty === "strenuous" && "bg-red-800"
+            )}
+          >
+            {tour.difficulty}
+          </Badge>
         </div>
 
-        <Separator />
-        <div>
-          <Card className="space-y-3 p-3 md:text-base text-sm capitalize">
-            <h1 className="text-lg font-semibold text-greenPrimary">
-              Location
-            </h1>
-            <p>{tour.name}</p>
-            <p>{tour.location}</p>
-            <p>{tour.country}</p>
-          </Card>
-        </div>
-
-        <Separator />
-        <div>
-          <Card className="space-y-3 p-3">
-            <h1 className="text-lg font-semibold text-greenPrimary">
-              Organizers
-            </h1>
-            <h1 className="text-sm font-medium">Tumaini Fitness</h1>
-            <p className="flex cursor-pointer items-center gap-2 transition-colors duration-200 ease-in-out hover:text-greenPrimary">
-              <Phone />
-              <a href="tel:+254703371240">Call Us</a>
-            </p>
-            <p className="flex cursor-pointer items-center gap-2 transition-colors duration-200 ease-in-out hover:text-greenPrimary">
-              <Mail />
-              <a href="mailto:info@tumainifitness.co.ke">Send Email</a>
-            </p>
-          </Card>
-        </div>
-
-        <div>
-          <Card className="justify-between p-5 flex">
-            <div className="flex gap-3 flex-col">
-              <h1 className="text-base font-semibold text-greenPrimary">
-                Booking
+        <div className="gap-3 grid grid-cols-1 md:grid-cols-[3fr_1fr]">
+          <ScrollArea className="md:h-96 border p-3 rounded-lg">
+            <div>
+              <h2 className="md:text-lg text-sm font-semibold text-primary">
+                Tour Description
+              </h2>
+              <div
+                className="break-word post-content text-sm"
+                dangerouslySetInnerHTML={{ __html: tour && tour.description }}
+              ></div>
+            </div>
+            <div>
+              <h1 className="text-xl font-semibold text-primary mt-3">
+                Itinerary
               </h1>
-              <p className="font-semibold">KES {tour.booking}</p>
+              <Accordion type="multiple" className="w-full text-start">
+                {tour.itinerary.map((itinerary, index) => (
+                  <AccordionItem value={`value ${index}`} key={index}>
+                    <AccordionTrigger>{itinerary.day}</AccordionTrigger>
+                    <AccordionContent>{itinerary.details}</AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </div>
 
-            <div className="flex gap-3 flex-col">
-              <h1 className="text-base font-semibold text-greenPrimary">
-                Price
-              </h1>
-              <p className=" font-semibold">KES{tour.price}</p>
+            <Tabs defaultValue="inclusive" className="w-full mt-5">
+              <TabsList className="w-full">
+                <TabsTrigger value="inclusive" className="w-full">
+                  Inclusive
+                </TabsTrigger>
+                <TabsTrigger value="exclusive" className="w-full">
+                  Exclusive
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="inclusive">
+                {tour.inclusive.map((item, index) => (
+                  <span key={index} className="flex items-center gap-2">
+                    <Check className="text-primary" size={17} />
+                    <p className="text-sm">{item.item}</p>
+                  </span>
+                ))}
+              </TabsContent>
+              <TabsContent value="exclusive">
+                {tour.exclusive.map((item, index) => (
+                  <span key={index} className="flex items-center gap-2">
+                    <X className="text-destructive" />
+                    <p className="text-sm">{item.item}</p>
+                  </span>
+                ))}{" "}
+              </TabsContent>
+            </Tabs>
+          </ScrollArea>
+          <Card className="p-5 flex h-fit flex-col">
+            <div className="flex justify-between w-full gap-5">
+              <div className="flex flex-col text-center bg-primary w-full h-fit px-3 rounded-lg py-[2px] text-white">
+                <h1 className="text-xs font-semibold">Price</h1>
+                <p className="font-semibold text-sm"> KES {tour.price}</p>
+              </div>
+              <div className="flex flex-col text-center bg-primary w-full h-fit px-3 rounded-lg py-[2px] text-white">
+                <h1 className="text-xs font-semibold">Booking</h1>
+                <p className="font-semibold text-sm"> KES {tour.booking}</p>
+              </div>
             </div>
-          </Card>
-        </div>
 
-        <div>
-          <Card>
             <div className="space-y-3 p-3">
-              <h2 className="text-xl font-bold">Payment Details</h2>
-              <div className="relative w-[200px]">
+              <h2 className="text-lg font-semibold text-center">
+                Payment Details
+              </h2>
+              <div className="relative w-[200px] mx-auto">
                 <Image
                   src={safaricom}
                   alt="safaricom logo"
-                  className="w-[200px]"
+                  className="overflow-hidden rounded-lg"
                 />
               </div>
             </div>
+
+            <div className="space-y-2">
+              <Button className="bg-[#09C308] w-full">
+                <a
+                  className="flex w-full items-center justify-center gap-3"
+                  href={`https://wa.me/+254703371240?text=Hello i would like to know more about the ${tour.name} hike`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FaWhatsapp className="text-xl text-white" />
+                  <p>Book via whatsApp</p>
+                </a>
+              </Button>
+
+              <Dialog>
+                <DialogTrigger className="flex w-full max-w-full items-center justify-center gap-2 rounded-lg border-[2px] py-1 text-center font-semibold transition-all duration-200 ease-in-out hover:bg-gray-200 md:w-[250px]">
+                  <Mail />
+                  Book via Form
+                </DialogTrigger>
+                <TourBooking tourName={tour.name} />
+              </Dialog>
+            </div>
           </Card>
         </div>
+      </div>
 
-        <div className="flex flex-col gap-2">
+      {/* <div className="space-y-1">
+        <div className="flex flex-col gap-1">
           <h2 className="text-lg font-semibold text-greenPrimary">Share</h2>
           <p className="text-gray-600">
             Find out what people see and say about this event, and join the
@@ -163,7 +224,7 @@ const TourDetailsCard = ({ tour }: Props) => {
             </a>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

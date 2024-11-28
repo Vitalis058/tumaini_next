@@ -4,7 +4,7 @@ import UsefulLinks from "./UsefulLinks";
 
 const Footer = () => {
   return (
-    <footer className="mt-4 w-full bg-gray-300">
+    <footer className="mt-4 w-full bg-muted">
       <div className="mx-auto max-w-full px-3 md:max-w-[95%] lg:max-w-[1140px]">
         <div className="flex flex-row flex-wrap justify-between gap-9 py-10">
           <div className="min-w-[200px]">
@@ -18,7 +18,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="flex h-[50px] w-full items-center bg-white text-sm md:text-base">
+      <div className="h-[50px] w-full items-center bg-card text-sm md:text-base text-center">
         © {new Date().getFullYear()} Copyrights by Tumaini Fitness Adventures.
         All Rights Reserved
       </div>

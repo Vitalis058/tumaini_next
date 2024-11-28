@@ -1,18 +1,18 @@
 export default function CancellationPolicy() {
   return (
     <div className=" mx-auto text-center">
-      <h1 className="md:text-3xl text-xl font-bold mb-6 text-greenPrimary">
+      <h1 className="md:text-3xl text-xl font-bold mb-6 text-primary">
         Event Cancellation Policy
       </h1>
       <p className="text-lg mb-8">
         Understand our policies to help plan your adventure with confidence.
       </p>
 
-      <div className="text-left bg-white text-gray-800 p-6 rounded-lg shadow-lg">
+      <div className="text-left bg-muted p-6 rounded-lg shadow-lg">
         {/* Cancellation by Participant */}
         <div className="space-y-3">
           <div>
-            <h2 className="md:text-3xl sm:text-xl  font-semibold text-[#4CAF50] mb-4">
+            <h2 className="md:text-3xl sm:text-xl  font-semibold text-primary mb-4">
               1. Event Cancellation by Participant
             </h2>
             <ul className="space-y-4">
@@ -48,7 +48,7 @@ export default function CancellationPolicy() {
 
           {/* Cancellation by Organizer */}
           <div>
-            <h2 className="md:text-3xl sm:text-xl  font-semibold text-[#4CAF50] mb-4">
+            <h2 className="md:text-3xl sm:text-xl  font-semibold text-primary mb-4">
               2. Cancellation by Organizer
             </h2>
             <ul className="space-y-4">
@@ -76,7 +76,7 @@ export default function CancellationPolicy() {
 
           {/* Transfer of Reservation */}
           <div>
-            <h2 className="md:text-3xl sm:text-xl  font-semibold text-[#4CAF50] mb-4">
+            <h2 className="md:text-3xl sm:text-xl  font-semibold text-primary mb-4">
               3. Transfer of Reservation
             </h2>
             <p className=" text-sm md:text-base">

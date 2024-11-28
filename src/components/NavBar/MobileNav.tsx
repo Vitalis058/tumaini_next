@@ -50,6 +50,18 @@ const MobileNav = () => {
             </SheetClose>
 
             <Separator />
+
+            <SheetClose asChild>
+              <Link
+                href={"/contact"}
+                className="font-semibold active:text-greenPrimary"
+              >
+                contact-us
+              </Link>
+            </SheetClose>
+
+            <Separator />
+
             <SheetClose asChild>
               <Link
                 href={"/gallery"}

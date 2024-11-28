@@ -11,7 +11,7 @@ type Props = {
 
 function TourCard({ tour }: Props) {
   return (
-    <div className="relative w-full overflow-hidden rounded-xl border-2 p-2 transition-all duration-300 hover:border-greenPrimary]">
+    <div className="relative w-full overflow-hidden rounded-xl border-2 p-2 transition-all duration-300 hover:border-primary]">
       <Link href={`/tour-details/${tour.slug}`}>
         <AspectRatio ratio={16 / 8} className="relative">
           <Image
@@ -29,19 +29,17 @@ function TourCard({ tour }: Props) {
             {tour.name}
           </p>
           <p className="line-clamp-2 text-sm md:text-base">{tour.summary}</p>
-          <p className="font-medium text-sm text-greenPrimary">
+          <p className="font-medium text-sm text-primary">
             {new Date(tour.date).toDateString()}
           </p>
         </div>
         <div className="text- flex gap-3">
-          <Badge className="rounded-full bg-greenPrimary">
-            {tour.price} KES
-          </Badge>
+          <Badge className="rounded-full bg-primary">{tour.price} KES</Badge>
 
           <Link href={`/tour-details/${tour.slug}`} className="flex-1">
             <Button
               variant={"outline"}
-              className="w-full rounded-full bg-gray-200 text-base font-semibold"
+              className="w-full rounded-full bg-muted text-base font-semibold"
             >
               Details
             </Button>

@@ -8,7 +8,7 @@ export default function PreparationPage() {
         Get ready to conquer the trail with our essential preparation tips!
       </p>
 
-      <div className="text-left bg-white text-gray-800 p-6 rounded-lg shadow-lg space-y-6">
+      <div className="text-left bg-muted p-6 rounded-lg shadow-lg space-y-6">
         <div>
           <h2 className="md:text-2xl text-lg font-semibold text-[#4CAF50] mb-2">
             1. Build Your Stamina

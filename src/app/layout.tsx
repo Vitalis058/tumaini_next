@@ -5,8 +5,8 @@ import Navbar from "@/components/NavBar/Navbar";
 import { cn } from "@/lib/utils";
 import QueryProvider from "@/components/QueryProvider";
 import Footer from "@/components/Footer/Footer";
-import Head from "next/head";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "next-themes";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,20 +23,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Head>
-        <link rel="icon" href="./favicon.ico" sizes="any" />
-      </Head>
-      <body
-        className={cn(
-          "mx-auto max-w-full px-3 md:max-w-[95%] lg:max-w-[1250px]",
-          inter.className
-        )}
-      >
+      <body className={cn(inter.className)}>
         <QueryProvider>
-          <Navbar />
-          <main className="mt-3">{children}</main>
-          <Footer />
-          <Toaster />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Navbar />
+            <main className="mx-auto w-full px-3 md:max-w-[95%] lg:max-w-[1200px]">
+              {children}
+            </main>
+            <Footer />
+
+            <Toaster />
+          </ThemeProvider>
         </QueryProvider>
       </body>
     </html>

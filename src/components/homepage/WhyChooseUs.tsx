@@ -5,7 +5,7 @@ import { FaHiking } from "react-icons/fa";
 
 function WhyChooseUs() {
   return (
-    <div className="flex gap-10 flex-col md:flex-row">
+    <div className="flex gap-10 flex-col md:flex-row bg-muted p-5 rounded-lg">
       <div className="flex-1 space-y-5">
         <h1 className={`md:text-3xl text-xl font-bold text-greenPrimary`}>
           Why Choose Us
@@ -20,19 +20,19 @@ function WhyChooseUs() {
 
         <div className="space-y-3 md:text-base text-sm">
           <span className="flex items-center gap-3">
-            <span className="rounded-full bg-greenPrimary p-2">
+            <span className="rounded-full bg-primary p-2">
               <FaHiking className="text-muted" size={20} />
             </span>
             <span className="font-semibold">Trail blazing adventures</span>
           </span>
           <span className="flex items-center gap-3">
-            <span className="rounded-full bg-greenPrimary p-2">
+            <span className="rounded-full bg-primary p-2">
               <Calendar className="text-muted" />
             </span>
             <span className="font-semibold">Year round adventures</span>
           </span>
           <span className="flex items-center gap-3">
-            <span className="rounded-full bg-greenPrimary p-2">
+            <span className="rounded-full bg-primary p-2">
               <Mountain className="text-muted" />
             </span>
             <span className="font-semibold">
@@ -40,7 +40,7 @@ function WhyChooseUs() {
             </span>
           </span>
           <span className="flex items-center gap-3">
-            <span className="rounded-full bg-greenPrimary p-2">
+            <span className="rounded-full bg-primary p-2">
               <SquareLibrary className="text-muted" />
             </span>
             <span className="font-semibold">

@@ -3,13 +3,13 @@ const AboutUs = () => {
     <section>
       <div>
         <div className="">
-          <h1 className="mb-6 text-center text-xl font-bold text-gray-800 md:text-3xl">
+          <h1 className="mb-6 text-center text-xl font-bold md:text-3xl">
             Welcome to Tumaini Fitness Adventures
           </h1>
 
           <p className="mb-6 text-sm md:text-lg">
             Are you looking for a Fitness Adventurers’ package to spice up your
-            fitness regimen?{" "}
+            fitness regimen?
             <span className="font-semibold text-greenPrimary">
               We are here to help you up your fitness goal while exploring the
               planet.

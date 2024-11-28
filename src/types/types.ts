@@ -1,4 +1,5 @@
 export type TourType = {
+  id: number;
   name: string;
   price: number;
   rating: number;
@@ -13,4 +14,15 @@ export type TourType = {
   imageUrl: string;
   slug: string;
   booking: number;
+  active: boolean;
+  itinerary: {
+    day: string;
+    details: string;
+  }[];
+  inclusive: {
+    item: string;
+  }[];
+  exclusive: {
+    item: string;
+  }[];
 };
