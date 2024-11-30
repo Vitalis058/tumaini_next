@@ -26,18 +26,19 @@ export const ImagesSlider = ({
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex + 1 === images.length ? 0 : prevIndex + 1,
+      prevIndex + 1 === images.length ? 0 : prevIndex + 1
     );
   };
 
   const handlePrevious = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex - 1 < 0 ? images.length - 1 : prevIndex - 1,
+      prevIndex - 1 < 0 ? images.length - 1 : prevIndex - 1
     );
   };
 
   useEffect(() => {
     loadImages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadImages = () => {
@@ -82,6 +83,7 @@ export const ImagesSlider = ({
       window.removeEventListener("keydown", handleKeyDown);
       clearInterval(interval);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const slideVariants = {
@@ -121,7 +123,7 @@ export const ImagesSlider = ({
     <div
       className={cn(
         "relative flex h-full w-full items-center justify-center overflow-hidden",
-        className,
+        className
       )}
       style={{
         perspective: "1000px",

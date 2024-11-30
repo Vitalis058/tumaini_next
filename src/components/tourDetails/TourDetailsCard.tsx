@@ -17,13 +17,18 @@ import {
 } from "../ui/accordion";
 import { cn } from "@/lib/utils";
 import { Badge } from "../ui/badge";
-import { Tour } from "@/types/types";
+import { Tour } from "@prisma/client";
 
 type Props = {
   tour: Tour;
 };
+type ItineraryTypes = { day: string; details: string }[];
 
 const TourDetailsCard = ({ tour }: Props) => {
+  const itinerary = tour.itinerary as ItineraryTypes;
+  const inclusive = tour.inclusive as { item: string }[];
+  const exclusive = tour.exclusive as { item: string }[];
+
   return (
     <div className="mt-2">
       <div className="w-full space-y-3">
@@ -100,13 +105,12 @@ const TourDetailsCard = ({ tour }: Props) => {
                 Itinerary
               </h1>
               <Accordion type="multiple" className="w-full text-start">
-                {tour.itinerary &&
-                  tour.itinerary.map((itinerary, index) => (
-                    <AccordionItem value={`value ${index}`} key={index}>
-                      <AccordionTrigger>{itinerary.day}</AccordionTrigger>
-                      <AccordionContent>{itinerary.details}</AccordionContent>
-                    </AccordionItem>
-                  ))}
+                {itinerary.map((itinerary, index) => (
+                  <AccordionItem value={`value ${index}`} key={index}>
+                    <AccordionTrigger>{itinerary.day}</AccordionTrigger>
+                    <AccordionContent>{itinerary.details}</AccordionContent>
+                  </AccordionItem>
+                ))}
               </Accordion>
             </div>
 
@@ -120,7 +124,7 @@ const TourDetailsCard = ({ tour }: Props) => {
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="inclusive">
-                {tour.inclusive.map((item, index) => (
+                {inclusive.map((item, index) => (
                   <span key={index} className="flex items-center gap-2">
                     <Check className="text-primary" size={17} />
                     <p className="text-sm">{item.item}</p>
@@ -128,7 +132,7 @@ const TourDetailsCard = ({ tour }: Props) => {
                 ))}
               </TabsContent>
               <TabsContent value="exclusive">
-                {tour.exclusive.map((item, index) => (
+                {exclusive.map((item, index) => (
                   <span key={index} className="flex items-center gap-2">
                     <X className="text-destructive" />
                     <p className="text-sm">{item.item}</p>
