@@ -1,4 +1,4 @@
-import HeroImage from "@/components/homepage/HeroImage";
+import HeroImage from "@/components/homepage/Hero";
 import HomePageSkeleton from "@/components/homepage/HomePageSkeleton";
 import RecentTours from "@/components/homepage/RecentTours";
 import Safety from "@/components/homepage/Safety";

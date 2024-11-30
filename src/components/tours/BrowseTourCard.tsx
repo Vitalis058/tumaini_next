@@ -3,18 +3,18 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import StarRating from "../StarRating";
 import Link from "next/link";
-import { TourType } from "@/types/types";
 import Image from "next/image";
 import { AspectRatio } from "../ui/aspect-ratio";
+import { Tour } from "@prisma/client";
 
 type Props = {
-  tour: TourType;
+  tour: Tour;
 };
 
 const BrowseTourCard = ({ tour }: Props) => {
   return (
     <Link
-      href={`/tour-details/${tour.slug}`}
+      href={`/tour-details/${tour.id}`}
       className="group grid h-[30%] gap-5 rounded-xl border-[1px] border-greenPrimary p-3 md:grid-cols-[2fr_3fr]"
     >
       <AspectRatio ratio={16 / 6} className="relative">
@@ -68,7 +68,7 @@ const BrowseTourCard = ({ tour }: Props) => {
           <div className="flex flex-col justify-between gap-2 sm:gap-0 md:flex-row">
             <div className="basis-[80%]">
               <h3 className="place-content-end place-self-start text-lg font-semibold capitalize text-greenPrimary">
-                {tour.name}
+                {tour.tourName}
               </h3>
               <p
                 className="text-sm capitalize line-clamp-3 mb-2"

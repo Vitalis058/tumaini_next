@@ -1,51 +1,40 @@
 import Image from "next/image";
 import mountain from "./../../../public/image/hero.jpg";
-import { TypewriterEffectSmooth } from "../ui/typewriter-effect";
+import { FlipWords } from "../ui/flip-words";
 
 const HeroImage = () => {
-  const words = [
-    {
-      text: "Unleash",
-      className:
-        "text-white text-base sm:text-xl  md:text-3xl dark:text-blue-500",
-    },
-    {
-      text: "your",
-      className:
-        "text-white text-base sm:text-xl  md:text-3xl dark:text-blue-500",
-    },
-    {
-      text: "spirit",
-      className:
-        "text-white text-base sm:text-xl  md:text-3xl dark:text-blue-500",
-    },
-    {
-      text: "of",
-      className:
-        "text-white text-base sm:text-xl  md:text-3xl dark:text-blue-500",
-    },
-    {
-      text: "Adventure.",
-      className:
-        "text-greenPrimary text-base sm:text-xl md:text-3xl dark:text-blue-500",
-    },
-  ];
+  const words = ["adventures", "journeys"];
 
   return (
-    <div className="h-[80vh] w-full rounded-lg">
-      <div className="relative h-full flex-1 before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-black before:z-10 before:rounded-lg before:opacity-30">
+    <div className="h-[80vh] w-full rounded-lg mt-3">
+      <div
+        className="relative h-full flex-1 
+          before:content-[''] before:absolute before:top-0 before:left-0 
+          before:w-full before:h-full before:bg-black 
+          before:z-10 before:rounded-lg before:opacity-30"
+      >
         <Image
           src={mountain}
-          alt="tumaini fitness hiking image"
+          alt="Mountain view for Tumaini Fitness hiking adventures."
           fill
           className="rounded-lg object-cover"
+          priority
         />
-        <div className="w-full absolute flex flex-col items-center h-[40rem] z-20 top-[30%] left-[50%] transform -translate-x-[50%] text-white">
-          <TypewriterEffectSmooth words={words} />
-          <p className="text-center text-sm md:text-base max-w-full md:max-w-[50%] px-3">
-            At Tumaini Fitness, we lead you on unforgettable hikes through
-            stunning landscapes. Embrace adventure, discover your strength, and
-            connect with nature
+        <div
+          className="absolute left-[50%] -translate-x-[50%] z-50 m-4 mx-auto flex h-full w-full 
+          flex-col justify-center gap-4 text-center md:max-w-[60%]"
+        >
+          <h2 className="text-xl font-bold text-white md:text-4xl">
+            Embark on unforgettable{" "}
+            <FlipWords
+              words={words}
+              className="font-bold dark:text-primary text-primary"
+            />{" "}
+            with Tumaini Fitness.
+          </h2>
+          <p className="hidden text-white md:block">
+            Discover the world’s wonders with personalized journeys. Let’s turn
+            your travel dreams into reality!
           </p>
         </div>
       </div>

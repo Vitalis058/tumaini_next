@@ -1,11 +1,12 @@
 import TourCard from "./TourCard";
 import { Key } from "react";
-import { TourType } from "@/types/types";
-import axios from "axios";
-const API_BASE_URL = process.env.BASE_URL || "";
+import prisma from "@/lib/prisma";
+import { Tour } from "@prisma/client";
 
 const RecentTours = async () => {
-  const { data } = await axios.get(`${API_BASE_URL}/api/tours?limit=3`);
+  const data = await prisma.tour.findMany({
+    take: 3,
+  });
 
   if (data.length === 0)
     return (
@@ -28,7 +29,7 @@ const RecentTours = async () => {
           Upcoming Hikes
         </h2>
         <div className="flex w-full flex-col justify-between gap-5 md:flex-row">
-          {data?.map((tours: TourType, index: Key | null | undefined) => (
+          {data?.map((tours: Tour, index: Key | null | undefined) => (
             <TourCard tour={tours} key={index} />
           ))}
         </div>

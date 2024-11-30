@@ -1,28 +1,33 @@
-export type TourType = {
-  id: number;
-  name: string;
+export interface Tour {
+  id: string;
+  tourName: string;
   price: number;
+  booking: number;
+  imageUrl: string;
   rating: number;
   difficulty: string;
+  level: string;
   hikeType: string;
   location: string;
-  country: string;
-  summary: string;
-  description: string;
-  level: string;
   date: string;
-  imageUrl: string;
-  slug: string;
-  booking: number;
-  active: boolean;
-  itinerary: {
-    day: string;
-    details: string;
-  }[];
-  inclusive: {
-    item: string;
-  }[];
-  exclusive: {
-    item: string;
-  }[];
-};
+  description: string;
+  summary: string;
+  itinerary: ItineraryItem[] | null;
+  inclusive: InclusiveItem[];
+  exclusive: ExclusiveItem[];
+  createdAt: string; // Date string in ISO format
+  updatedAt: string; // Date string in ISO format
+}
+
+interface ItineraryItem {
+  day: string;
+  details: string;
+}
+
+interface InclusiveItem {
+  item: string;
+}
+
+interface ExclusiveItem {
+  item: string;
+}

@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/card";
 import { Calendar1, Check, Mail, MapPin, X } from "lucide-react";
 import safaricom from "./../../../public/image/Professional Lipa Na Mpesa Banner Flyer (us L - Made with PosterMyWall (4).jpg";
 import Image from "next/image";
-import { TourType } from "@/types/types";
 import { Button } from "../ui/button";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 import TourBooking from "./tourBooking";
@@ -18,9 +17,10 @@ import {
 } from "../ui/accordion";
 import { cn } from "@/lib/utils";
 import { Badge } from "../ui/badge";
+import { Tour } from "@/types/types";
 
 type Props = {
-  tour: TourType;
+  tour: Tour;
 };
 
 const TourDetailsCard = ({ tour }: Props) => {
@@ -36,7 +36,7 @@ const TourDetailsCard = ({ tour }: Props) => {
           />
           <div className="absolute left-[50%] top-[40%] z-[10] w-full -translate-x-[50%] transform px-3 text-center text-white flex flex-col justify-center gap-3 items-center">
             <h1 className="capitalize font-semibold md:text-3xl text-2xl">
-              {tour.name}
+              {tour.tourName}
             </h1>
             <div className="flex flex-col sm:flex-row sm:gap-5 items-center">
               <span className="flex items-center gap-1">
@@ -100,12 +100,13 @@ const TourDetailsCard = ({ tour }: Props) => {
                 Itinerary
               </h1>
               <Accordion type="multiple" className="w-full text-start">
-                {tour.itinerary.map((itinerary, index) => (
-                  <AccordionItem value={`value ${index}`} key={index}>
-                    <AccordionTrigger>{itinerary.day}</AccordionTrigger>
-                    <AccordionContent>{itinerary.details}</AccordionContent>
-                  </AccordionItem>
-                ))}
+                {tour.itinerary &&
+                  tour.itinerary.map((itinerary, index) => (
+                    <AccordionItem value={`value ${index}`} key={index}>
+                      <AccordionTrigger>{itinerary.day}</AccordionTrigger>
+                      <AccordionContent>{itinerary.details}</AccordionContent>
+                    </AccordionItem>
+                  ))}
               </Accordion>
             </div>
 
@@ -165,7 +166,7 @@ const TourDetailsCard = ({ tour }: Props) => {
               <Button className="bg-[#09C308] w-full">
                 <a
                   className="flex w-full items-center justify-center gap-3"
-                  href={`https://wa.me/+254703371240?text=Hello i would like to know more about the ${tour.name} hike`}
+                  href={`https://wa.me/+254703371240?text=Hello i would like to know more about the ${tour.tourName} hike`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -179,7 +180,7 @@ const TourDetailsCard = ({ tour }: Props) => {
                   <Mail />
                   Book via Form
                 </DialogTrigger>
-                <TourBooking tourName={tour.name} />
+                <TourBooking tourName={tour.tourName} />
               </Dialog>
             </div>
           </Card>
