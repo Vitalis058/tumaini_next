@@ -3,7 +3,7 @@ import { Skeleton } from "../ui/skeleton";
 const HomePageSkeleton = () => {
   return (
     <div className="flex flex-col gap-4 md:flex-row">
-      <div className="group relative h-[350px] w-full overflow-hidden rounded-lg border-2 border-gray-300 md:w-[330px]">
+      <div className="group relative h-[350px] w-full overflow-hidden rounded-lg border-2 border-gray-300 md:min-w-[330px]">
         <Skeleton className="h-[200px] w-full" />
 
         <div className="flex flex-col gap-2 p-3">
@@ -16,7 +16,7 @@ const HomePageSkeleton = () => {
         </div>
       </div>
 
-      <div className="group relative h-[350px] w-full overflow-hidden rounded-lg border-2 border-gray-300 md:w-[330px]">
+      <div className="group relative h-[350px] w-full overflow-hidden rounded-lg border-2 border-gray-300 md:min-w-[330px]">
         <Skeleton className="h-[200px] w-full" />
 
         <div className="flex flex-col gap-2 p-3">
@@ -29,7 +29,7 @@ const HomePageSkeleton = () => {
         </div>
       </div>
 
-      <div className="group relative h-[350px] w-full overflow-hidden rounded-lg border-2 border-gray-300 md:w-[330px]">
+      <div className="group relative h-[350px] w-full overflow-hidden rounded-lg border-2 border-gray-300 md:min-w-[330px]">
         <Skeleton className="h-[200px] w-full" />
 
         <div className="flex flex-col gap-2 p-3">

@@ -30,7 +30,12 @@ const RecentTours = async () => {
         </h2>
         <div className="flex w-full flex-col justify-between gap-5 md:flex-row">
           {data?.map((tours: Tour, index: Key | null | undefined) => (
-            <TourCard tour={tours} key={index} />
+            <div
+              key={index}
+              className={`${data.length === 1 ? "md:w-[350px]" : ""}`}
+            >
+              <TourCard tour={tours} key={index} />
+            </div>
           ))}
         </div>
       </div>

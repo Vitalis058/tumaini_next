@@ -3,7 +3,13 @@ import mountain from "./../../../public/image/hero.jpg";
 import { FlipWords } from "../ui/flip-words";
 
 const HeroImage = () => {
-  const words = ["adventures", "journeys"];
+  const words = [
+    "Adventures",
+    "Journeys",
+    "Expeditions",
+    "Odysseys",
+    "Horizons",
+  ];
 
   return (
     <div className="h-[80vh] w-full rounded-lg mt-3">

@@ -25,7 +25,7 @@ function TourCard({ tour }: Props) {
 
       <div className="flex flex-col gap-2 p-3">
         <div className="flex flex-col justify-between gap-1">
-          <p className="line-clamp-1 md:text-lg  font-semibold capitalize text-gray-600">
+          <p className="line-clamp-1 md:text-lg  font-semibold capitalize">
             {tour.tourName}
           </p>
           <p className="line-clamp-2 text-sm md:text-base">{tour.summary}</p>
