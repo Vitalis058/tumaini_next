@@ -5,7 +5,6 @@ import prisma from "@/lib/prisma";
 
 const ToursRendering = async () => {
   const data = await prisma.tour.findMany();
-  console.log(data);
 
   return (
     <div className="flex flex-col gap-5">

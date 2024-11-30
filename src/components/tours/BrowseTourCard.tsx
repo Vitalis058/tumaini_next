@@ -70,10 +70,9 @@ const BrowseTourCard = ({ tour }: Props) => {
               <h3 className="place-content-end place-self-start text-lg font-semibold capitalize text-greenPrimary">
                 {tour.tourName}
               </h3>
-              <p
-                className="text-sm capitalize line-clamp-3 mb-2"
-                dangerouslySetInnerHTML={{ __html: tour && tour.description }}
-              ></p>
+              <p className="text-sm capitalize line-clamp-3 mb-2">
+                {tour.summary}
+              </p>
               <StarRating defaultRating={tour.rating} />
             </div>
 
