@@ -3,13 +3,37 @@ import { Separator } from "@/components/ui/separator";
 import TourDetailsCard from "@/components/tourDetails/TourDetailsCard";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
+import { notFound } from "next/navigation";
 
 type PageProps = Promise<{
   tourId: string;
 }>;
 
+const getTour = async (tourId: string) => {
+  const tour = await prisma.tour.findUnique({
+    where: {
+      id: tourId,
+    },
+  });
+
+  if (!tour) return notFound();
+
+  return tour;
+};
+
+export async function generateMetadata(props: { params: PageProps }) {
+  const { tourId } = await props.params;
+  const tour = getTour(tourId);
+
+  return {
+    title: `${(await tour).tourName}`,
+  };
+}
+
 const TourDetailsPage = async (props: { params: PageProps }) => {
   const { tourId } = await props.params;
+
+  await new Promise((resolve) => setTimeout(resolve, 5000));
 
   const tour = await prisma.tour.findUnique({
     where: {
