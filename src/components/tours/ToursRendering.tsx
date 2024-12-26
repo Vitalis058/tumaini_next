@@ -2,9 +2,14 @@ import BrowseTourCard from "./BrowseTourCard";
 import { Key } from "react";
 import { Tour } from "@prisma/client";
 import prisma from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
+
+const getTours = unstable_cache(async () => {
+  return await prisma.tour.findMany();
+});
 
 const ToursRendering = async () => {
-  const data = await prisma.tour.findMany();
+  const data = await getTours();
 
   return (
     <div className="flex flex-col gap-5">

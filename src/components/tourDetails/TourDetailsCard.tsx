@@ -22,6 +22,7 @@ import { Tour } from "@prisma/client";
 type Props = {
   tour: Tour;
 };
+
 type ItineraryTypes = { day: string; details: string }[];
 
 const TourDetailsCard = ({ tour }: Props) => {

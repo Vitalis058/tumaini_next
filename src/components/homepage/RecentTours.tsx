@@ -32,7 +32,7 @@ const RecentTours = async () => {
           {data?.map((tours: Tour, index: Key | null | undefined) => (
             <div
               key={index}
-              className={`${data.length === 1 ? "md:w-[350px]" : ""}`}
+              className={`${data.length <= 1 ? "md:w-[350px]" : "flex-1"}`}
             >
               <TourCard tour={tours} key={index} />
             </div>

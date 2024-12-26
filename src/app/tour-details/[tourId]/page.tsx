@@ -9,31 +9,25 @@ type PageProps = Promise<{
   tourId: string;
 }>;
 
-const getTour = async (tourId: string) => {
-  const tour = await prisma.tour.findUnique({
-    where: {
-      id: tourId,
-    },
-  });
-
-  if (!tour) return notFound();
-
-  return tour;
-};
-
 export async function generateMetadata(props: { params: PageProps }) {
   const { tourId } = await props.params;
-  const tour = getTour(tourId);
+
+  // Only fetch metadata fields
+  const tour = await prisma.tour.findUnique({
+    where: { id: tourId },
+    select: { tourName: true }, // Fetch only tourName
+  });
+
+  if (!tour) return { title: "Tour Not Found" };
+  if (!tour) return notFound();
 
   return {
-    title: `${(await tour).tourName}`,
+    title: tour.tourName,
   };
 }
 
 const TourDetailsPage = async (props: { params: PageProps }) => {
   const { tourId } = await props.params;
-
-  await new Promise((resolve) => setTimeout(resolve, 5000));
 
   const tour = await prisma.tour.findUnique({
     where: {
