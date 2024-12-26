@@ -7,6 +7,7 @@ import QueryProvider from "@/components/QueryProvider";
 import Footer from "@/components/Footer/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "next-themes";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -106,6 +107,7 @@ export default function RootLayout({
             <Toaster />
           </ThemeProvider>
         </QueryProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
