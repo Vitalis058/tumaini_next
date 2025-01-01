@@ -6,6 +6,9 @@ export async function GET(req: NextRequest) {
   try {
     const tours = await prisma.tour.findMany({
       take: limit ? parseInt(limit) : undefined,
+      orderBy: {
+        date: "asc",
+      },
     });
     return NextResponse.json(tours);
   } catch (error) {
