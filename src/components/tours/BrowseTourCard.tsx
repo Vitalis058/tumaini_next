@@ -81,7 +81,7 @@ const BrowseTourCard = ({ tour }: Props) => {
             </h3>
           </div>
 
-          <Button variant={"outline"} className="w-full">
+          <Button variant={"outline"} className="w-full bg-muted">
             More details
           </Button>
         </div>

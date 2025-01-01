@@ -12,10 +12,10 @@ export interface Tour {
   date: string;
   description: string;
   summary: string;
-  itinerary: ItineraryItem[] | null;
+  itinerary: ItineraryItem[];
   inclusive: InclusiveItem[];
   exclusive: ExclusiveItem[];
-  createdAt: string; // Date string in ISO format
+  createdAt: string;
   updatedAt: string; // Date string in ISO format
 }
 

@@ -91,7 +91,7 @@ const TourDetailsCard = ({ tour }: Props) => {
         </div>
 
         <div className="gap-3 grid grid-cols-1 md:grid-cols-[3fr_1fr]">
-          <ScrollArea className="md:h-96 border p-3 rounded-lg">
+          <ScrollArea className="border p-3 rounded-lg">
             <div>
               <h2 className="md:text-lg text-sm font-semibold text-primary">
                 Tour Description
@@ -142,7 +142,8 @@ const TourDetailsCard = ({ tour }: Props) => {
               </TabsContent>
             </Tabs>
           </ScrollArea>
-          <Card className="p-5 flex h-fit flex-col">
+
+          <Card className="p-5 flex h-fit flex-col sticky top-24">
             <div className="flex justify-between w-full gap-5">
               <div className="flex flex-col text-center bg-primary w-full h-fit px-3 rounded-lg py-[2px] text-white">
                 <h1 className="text-xs font-semibold">Price</h1>

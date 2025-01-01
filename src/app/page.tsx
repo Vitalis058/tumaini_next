@@ -1,19 +1,15 @@
 import HeroImage from "@/components/homepage/Hero";
-import HomePageSkeleton from "@/components/homepage/HomePageSkeleton";
 import RecentTours from "@/components/homepage/RecentTours";
 import Safety from "@/components/homepage/Safety";
 import WhyChooseUs from "@/components/homepage/WhyChooseUs";
 import { Button } from "@/components/ui/button";
-import React, { Suspense } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 
 function page() {
   return (
     <div className="space-y-20">
       <HeroImage />
-      <Suspense fallback={<HomePageSkeleton />}>
-        <RecentTours />
-      </Suspense>
+      <RecentTours />
       <WhyChooseUs />
       <Safety />
 
