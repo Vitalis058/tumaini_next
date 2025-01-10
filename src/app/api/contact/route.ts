@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     //
     const data = await resend.emails.send({
       from: "TumainiFitnessCentre<no-reply@tumainifitness.co.ke>",
-      to: ["mainavitalis65@gmail.com"],
+      to: ["boniface.njugunah@gmail.com"],
       subject: "Inquiry",
       react: ContactFormEmail({
         name,
