@@ -31,7 +31,10 @@ const HeroImage = () => {
             Discover the world’s wonders with personalized journeys. Let’s turn
             your travel dreams into reality!
           </p>
-          <Button className="sm:max-w-52 w-full rounded-lg" asChild>
+          <Button
+            className="sm:max-w-52 w-[70%] hover:scale-105 transition-all duration-200 ease-in-out rounded-lg"
+            asChild
+          >
             <Link href={"/tours"} className="">
               Get Started
             </Link>
