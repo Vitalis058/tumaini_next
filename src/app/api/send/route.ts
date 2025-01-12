@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
     await resend.emails.send({
       from: "TumainiFitnessWebsite<no-reply@tumainifitness.co.ke>",
-      to: ["boniface.njugunah@gmail.com"],
+      to: ["info@tumainifitness.co.ke"],
       subject: "Tour Booking Confirmation",
       react: AdminBookingNotificationEmail({
         name,
