@@ -7,7 +7,6 @@ import Image from "next/image";
 import { Button } from "../ui/button";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 import TourBooking from "./tourBooking";
-import { ScrollArea } from "../ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import {
   Accordion,
@@ -91,7 +90,7 @@ const TourDetailsCard = ({ tour }: Props) => {
         </div>
 
         <div className="gap-3 grid grid-cols-1 md:grid-cols-[3fr_1fr]">
-          <ScrollArea className="border p-3 rounded-lg">
+          <div className="md:border md:p-3 rounded-lg">
             <div>
               <h2 className="md:text-lg text-sm font-semibold text-primary">
                 Tour Description
@@ -141,7 +140,7 @@ const TourDetailsCard = ({ tour }: Props) => {
                 ))}{" "}
               </TabsContent>
             </Tabs>
-          </ScrollArea>
+          </div>
 
           <Card className="p-5 flex h-fit flex-col sticky top-24">
             <div className="flex justify-between w-full gap-5">

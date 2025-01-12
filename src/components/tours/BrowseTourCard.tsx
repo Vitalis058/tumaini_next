@@ -4,7 +4,6 @@ import { Button } from "../ui/button";
 import StarRating from "../StarRating";
 import Link from "next/link";
 import Image from "next/image";
-import { AspectRatio } from "../ui/aspect-ratio";
 import { Tour } from "@prisma/client";
 
 type Props = {
@@ -17,17 +16,17 @@ const BrowseTourCard = ({ tour }: Props) => {
       href={`/tour-details/${tour.id}`}
       className="group grid h-[30%] gap-5 rounded-xl border-[1px] border-greenPrimary p-3 md:grid-cols-[2fr_3fr]"
     >
-      <AspectRatio ratio={16 / 6} className="relative">
+      <div className="relative min-h-44 sm:min-h-auto">
         <Image
           src={tour.imageUrl}
           alt="my own image"
           className=" rounded-xl object-cover"
           fill
         />
-      </AspectRatio>
+      </div>
 
       <div className=" flex flex-col justify-center gap-1">
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-1">
           <div className="flex flex-col justify-between gap-2 sm:flex-row">
             <div className="justify flex flex-wrap gap-1">
               <Badge
@@ -65,18 +64,19 @@ const BrowseTourCard = ({ tour }: Props) => {
             </h1>
           </div>
 
-          <div className="flex flex-col justify-between gap-2 sm:gap-0 md:flex-row">
+          <div className="flex flex-col justify-between gap-1 sm:gap-0 md:flex-row">
             <div className="basis-[80%]">
-              <h3 className="place-content-end place-self-start text-lg font-semibold capitalize text-greenPrimary">
+              <h3 className="place-content-end place-self-start text-sm md:text-lg font-semibold capitalize text-greenPrimary">
                 {tour.tourName}
               </h3>
-              <p className="text-sm capitalize line-clamp-3 mb-2">
+              <p className=" text-xs sm:text-sm capitalize line-clamp-2 mb-2">
                 {tour.summary}
               </p>
-              <StarRating defaultRating={tour.rating} />
             </div>
-
-            <h3 className="text-lg font-semibold text-greenPrimary sm:self-end">
+          </div>
+          <div className="flex justify-between">
+            <StarRating defaultRating={tour.rating} />
+            <h3 className="md:text-lg font-semibold text-primary text-sm">
               {tour.price} KES
             </h3>
           </div>

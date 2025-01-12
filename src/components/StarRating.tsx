@@ -69,7 +69,7 @@ interface StarRatingProps {
 
 export default function StarRating({
   maxRating = 5,
-  size = 30,
+  size = 25,
   color = "#31B44C",
   defaultRating = 5,
   addStyle = {},
