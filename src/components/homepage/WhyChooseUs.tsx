@@ -10,7 +10,7 @@ function WhyChooseUs() {
         <h1 className={`md:text-3xl text-xl font-bold text-greenPrimary`}>
           Why Choose Us
         </h1>
-        <p className="text-sm font-medium">
+        <p className="text-sm">
           Choose Tumaini Fitness for your next adventure, where we blend
           expertise and passion to offer unforgettable hiking experiences. Our
           commitment to safety, personal growth, and environmental stewardship

@@ -7,7 +7,6 @@ import {
   SheetTrigger,
 } from "../ui/sheet";
 import { Separator } from "../ui/separator";
-import { Button } from "../ui/button";
 import Link from "next/link";
 
 const MobileNav = () => {
@@ -33,7 +32,7 @@ const MobileNav = () => {
             <SheetClose asChild>
               <Link
                 href={"/tours"}
-                className="font-semibold active:text-greenPrimary"
+                className="font-semibold active:text-greenPrimary text-sm"
               >
                 Tours
               </Link>
@@ -43,7 +42,7 @@ const MobileNav = () => {
             <SheetClose asChild>
               <Link
                 href={"/about"}
-                className="font-semibold active:text-greenPrimary"
+                className="font-semibold active:text-greenPrimary text-sm"
               >
                 About us
               </Link>
@@ -54,7 +53,7 @@ const MobileNav = () => {
             <SheetClose asChild>
               <Link
                 href={"/contact"}
-                className="font-semibold active:text-greenPrimary"
+                className="font-semibold active:text-greenPrimary text-sm"
               >
                 contact-us
               </Link>
@@ -65,23 +64,20 @@ const MobileNav = () => {
             <SheetClose asChild>
               <Link
                 href={"/gallery"}
-                className="font-semibold active:text-greenPrimary"
+                className="font-semibold active:text-greenPrimary text-sm"
               >
                 Gallery
               </Link>
             </SheetClose>
           </div>
-
-          <Button className="w-fit border-[2px] border-transparent bg-greenPrimary hover:border-[2px] hover:border-greenPrimary hover:bg-white hover:text-black">
-            <a
-              href="https://gym.tumainifitness.co.ke"
-              target="_blank"
-              rel="noopener"
-              className="font-bold"
-            >
-              Checkout our Gym
-            </a>{" "}
-          </Button>
+          <a
+            href="https://gym.tumainifitness.co.ke"
+            target="_blank"
+            rel="noopener"
+            className="font-bold text-sm text-primary underline"
+          >
+            Checkout our Gym
+          </a>{" "}
         </div>
       </SheetContent>
     </Sheet>
