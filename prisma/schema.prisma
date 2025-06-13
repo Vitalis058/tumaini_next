@@ -12,7 +12,7 @@ model Tour {
   tourName    String
   price       Float
   booking     Float
-  imageUrl    String
+  images      Json     @default("[]") // Array of image URLs
   rating      Int
   difficulty  String
   level       String
@@ -21,9 +21,18 @@ model Tour {
   date        String
   description String
   summary     String
-  itinerary   Json     @default("[]")
+  itinerary   Json     @default("[]") // Array of {time: string, details: string}
   inclusive   Json     @default("[]")
   exclusive   Json     @default("[]")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

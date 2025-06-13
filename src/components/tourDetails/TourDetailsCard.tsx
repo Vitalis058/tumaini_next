@@ -1,236 +1,515 @@
-import { FaWhatsapp } from "react-icons/fa";
+"use client";
 
-import { Card } from "@/components/ui/card";
-import { Calendar1, Check, Mail, MapPin, X } from "lucide-react";
-import safaricom from "./../../../public/image/Professional Lipa Na Mpesa Banner Flyer (us L - Made with PosterMyWall (4).jpg";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { Tour } from "@prisma/client";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Calendar,
+  Camera,
+  Check,
+  Clock,
+  Heart,
+  Mail,
+  MapPin,
+  Mountain,
+  Share2,
+  Shield,
+  Star,
+  Users,
+  X,
+} from "lucide-react";
 import Image from "next/image";
-import { Button } from "../ui/button";
-import { Dialog, DialogTrigger } from "../ui/dialog";
-import TourBooking from "./tourBooking";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { useState } from "react";
+import { FaWhatsapp } from "react-icons/fa";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
-import { Tour } from "@prisma/client";
+import { Button } from "../ui/button";
+import { Dialog, DialogTrigger } from "../ui/dialog";
+import { Separator } from "../ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import safaricom from "./../../../public/image/Professional Lipa Na Mpesa Banner Flyer (us L - Made with PosterMyWall (4).jpg";
+import TourBooking from "./tourBooking";
 
 type Props = {
   tour: Tour;
 };
 
-type ItineraryTypes = { day: string; details: string }[];
+type ItineraryTypes = { time: string; details: string }[];
 
 const TourDetailsCard = ({ tour }: Props) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Handle both old imageUrl and new images array
+  const images = tour.images
+    ? Array.isArray(tour.images)
+      ? (tour.images as string[])
+      : [tour.images as string]
+    : [
+        (tour as Tour & { imageUrl?: string }).imageUrl ||
+          "/placeholder-image.jpg",
+      ];
+
   const itinerary = tour.itinerary as ItineraryTypes;
   const inclusive = tour.inclusive as { item: string }[];
   const exclusive = tour.exclusive as { item: string }[];
 
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty.toLowerCase()) {
+      case "easy":
+        return "bg-green-500 dark:bg-green-600";
+      case "moderate":
+        return "bg-yellow-500 dark:bg-yellow-600";
+      case "advanced":
+        return "bg-orange-500 dark:bg-orange-600";
+      case "challenging":
+        return "bg-red-500 dark:bg-red-600";
+      case "strenuous":
+        return "bg-red-700 dark:bg-red-800";
+      default:
+        return "bg-primary";
+    }
+  };
+
+  const getLevelColor = (level: string) => {
+    switch (level.toLowerCase()) {
+      case "child-friendly":
+        return "bg-green-500 dark:bg-green-600";
+      case "intermediate":
+        return "bg-orange-500 dark:bg-orange-600";
+      case "advanced":
+        return "bg-red-500 dark:bg-red-600";
+      default:
+        return "bg-primary";
+    }
+  };
+
   return (
-    <div className="mt-2">
-      <div className="w-full space-y-3">
-        <div className="relative h-[50vh] rounded-md after:absolute after:left-0 after:top-0 after:h-full after:w-full after:rounded-lg after:bg-black  after:opacity-[30%] after:content-['']">
+    <div className="min-h-screen bg-background">
+      {/* Hero Section with Image Gallery */}
+      <div className="relative h-[60vh] md:h-[70vh] overflow-hidden rounded-xl">
+        <div className="relative h-full">
           <Image
-            src={tour.imageUrl}
-            alt=""
-            className="h-full w-full overflow-hidden rounded-lg object-cover"
+            src={images[currentImageIndex]}
+            alt={tour.tourName}
             fill
+            className="object-cover transition-all duration-500"
+            priority
           />
-          <div className="absolute left-[50%] top-[40%] z-[10] w-full -translate-x-[50%] transform px-3 text-center text-white flex flex-col justify-center gap-3 items-center">
-            <h1 className="capitalize font-semibold md:text-3xl text-2xl">
-              {tour.tourName}
-            </h1>
-            <div className="flex flex-col sm:flex-row sm:gap-5 items-center">
-              <span className="flex items-center gap-1">
-                <MapPin className="text-primary" size={20} />
-                <p className="text-base capitalize">{tour.location}</p>
-              </span>
 
-              <span className="flex items-center gap-1">
-                <Calendar1 className="text-primary" size={20} />
-                <p className="text-base capitalize">
-                  {new Date(tour.date).toDateString()}
-                </p>
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="justify flex flex-wrap gap-1">
-          <Badge
-            className={cn(
-              tour.level === "child-friendly" && "bg-greenPrimary",
-              tour.level === "intermediate" && "bg-orange-400",
-              tour.level === "advanced" && "bg-red-500"
-            )}
-          >
-            {tour.level}
-          </Badge>
-          <Badge
-            className={cn(
-              tour.hikeType === "day-hike" && "bg-yellow-400",
-              tour.hikeType === "multi-day-hike" && "bg-orange-400"
-            )}
-          >
-            {tour.hikeType}
-          </Badge>
-          <Badge
-            className={cn(
-              tour.difficulty === "easy" && "bg-green-500",
-              tour.difficulty === "moderate" && "bg-yellow-500",
-              tour.difficulty === "advanced" && "bg-orange-400",
-              tour.difficulty === "challenging" && "bg-red-500",
-              tour.difficulty === "strenuous" && "bg-red-800"
-            )}
-          >
-            {tour.difficulty}
-          </Badge>
-        </div>
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-        <div className="gap-3 grid grid-cols-1 md:grid-cols-[3fr_1fr]">
-          <div className="md:border md:p-3 rounded-lg">
-            <div>
-              <h2 className="md:text-lg text-sm font-semibold text-primary">
-                Tour Description
-              </h2>
-              <div
-                className="break-word post-content text-sm"
-                dangerouslySetInnerHTML={{ __html: tour && tour.description }}
-              ></div>
-            </div>
-            <div>
-              <h1 className="text-xl font-semibold text-primary mt-3">
-                Itinerary
-              </h1>
-              <Accordion type="multiple" className="w-full text-start">
-                {itinerary.map((itinerary, index) => (
-                  <AccordionItem value={`value ${index}`} key={index}>
-                    <AccordionTrigger>{itinerary.day}</AccordionTrigger>
-                    <AccordionContent>{itinerary.details}</AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </div>
-
-            <Tabs defaultValue="inclusive" className="w-full mt-5">
-              <TabsList className="w-full">
-                <TabsTrigger value="inclusive" className="w-full">
-                  Inclusive
-                </TabsTrigger>
-                <TabsTrigger value="exclusive" className="w-full">
-                  Exclusive
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="inclusive">
-                {inclusive.map((item, index) => (
-                  <span key={index} className="flex items-center gap-2">
-                    <Check className="text-primary" size={17} />
-                    <p className="text-sm">{item.item}</p>
-                  </span>
-                ))}
-              </TabsContent>
-              <TabsContent value="exclusive">
-                {exclusive.map((item, index) => (
-                  <span key={index} className="flex items-center gap-2">
-                    <X className="text-destructive" />
-                    <p className="text-sm">{item.item}</p>
-                  </span>
-                ))}{" "}
-              </TabsContent>
-            </Tabs>
-          </div>
-
-          <Card className="p-5 flex h-fit flex-col sticky top-24">
-            <div className="flex justify-between w-full gap-5">
-              <div className="flex flex-col text-center bg-primary w-full h-fit px-3 rounded-lg py-[2px] text-white">
-                <h1 className="text-xs font-semibold">Price</h1>
-                <p className="font-semibold text-sm"> KES {tour.price}</p>
-              </div>
-              <div className="flex flex-col text-center bg-primary w-full h-fit px-3 rounded-lg py-[2px] text-white">
-                <h1 className="text-xs font-semibold">Booking</h1>
-                <p className="font-semibold text-sm"> KES {tour.booking}</p>
-              </div>
-            </div>
-
-            <div className="space-y-3 p-3">
-              <h2 className="text-lg font-semibold text-center">
-                Payment Details
-              </h2>
-              <div className="relative w-[200px] mx-auto">
-                <Image
-                  src={safaricom}
-                  alt="safaricom logo"
-                  className="overflow-hidden rounded-lg"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Button className="bg-[#09C308] w-full">
-                <a
-                  className="flex w-full items-center justify-center gap-3"
-                  href={`https://wa.me/+254703371240?text=Hello i would like to know more about the ${tour.tourName} hike`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <FaWhatsapp className="text-xl text-white" />
-                  <p>Book via whatsApp</p>
-                </a>
+          {/* Image Navigation */}
+          {images.length > 1 && (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm"
+                onClick={prevImage}
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm"
+                onClick={nextImage}
+              >
+                <ArrowRight className="h-5 w-5" />
               </Button>
 
-              <Dialog>
-                <DialogTrigger className="flex w-full max-w-full items-center justify-center gap-2 rounded-lg border-[2px] py-1 text-center font-semibold transition-all duration-200 ease-in-out hover:bg-gray-200 md:w-[250px]">
-                  <Mail />
-                  Book via Form
-                </DialogTrigger>
-                <TourBooking tourName={tour.tourName} />
-              </Dialog>
+              {/* Image Indicators */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    className={cn(
+                      "w-2 h-2 rounded-full transition-all",
+                      index === currentImageIndex
+                        ? "bg-white"
+                        : "bg-white/50 hover:bg-white/75"
+                    )}
+                    onClick={() => setCurrentImageIndex(index)}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Hero Content */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+            <div className="max-w-4xl">
+              <div className="flex flex-wrap gap-2 mb-4">
+                <Badge
+                  className={cn(
+                    "text-white border-0",
+                    getDifficultyColor(tour.difficulty)
+                  )}
+                >
+                  <Mountain className="w-3 h-3 mr-1" />
+                  {tour.difficulty}
+                </Badge>
+                <Badge
+                  className={cn(
+                    "text-white border-0",
+                    getLevelColor(tour.level)
+                  )}
+                >
+                  <Users className="w-3 h-3 mr-1" />
+                  {tour.level}
+                </Badge>
+                <Badge className="bg-primary text-primary-foreground">
+                  <Clock className="w-3 h-3 mr-1" />
+                  {tour.hikeType}
+                </Badge>
+              </div>
+
+              <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 capitalize">
+                {tour.tourName}
+              </h1>
+
+              <div className="flex flex-col sm:flex-row gap-4 text-white/90">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-primary" />
+                  <span className="capitalize">{tour.location}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-primary" />
+                  <span>
+                    {new Date(tour.date).toLocaleDateString("en-US", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                  <span>{tour.rating}/5</span>
+                </div>
+              </div>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
 
-      {/* <div className="space-y-1">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold text-greenPrimary">Share</h2>
-          <p className="text-gray-600">
-            Find out what people see and say about this event, and join the
-            conversation.
-          </p>
-          <div className="mt-2 flex gap-3">
-            <a
-              href="https://web.facebook.com/groups/426842529472071"
-              target="_blank"
-              rel="noopener"
-            >
-              <FaFacebook className="text-2xl text-gray-500 duration-200 ease-out hover:text-greenPrimary" />
-            </a>
-            <a
-              href="https://www.instagram.com/tumaini_fitness_centre/"
-              target="_blank"
-              rel="noopener"
-            >
-              <FaInstagram className="text-2xl text-gray-500 duration-200 ease-out hover:text-greenPrimary" />
-            </a>
-            <a
-              href="https://x.com/Bonifac45261505"
-              target="_blank"
-              rel="noopener"
-            >
-              <FaXTwitter className="text-2xl text-gray-500 duration-200 ease-out hover:text-greenPrimary" />
-            </a>
-            <a
-              href="https://chat.whatsapp.com/DGG9QDHw7au1KGOCu7pYDO"
-              target="_blank"
-              rel="noopener"
-            >
-              <FaWhatsapp className="text-2xl text-gray-500 duration-200 ease-out hover:text-greenPrimary" />
-            </a>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Content */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Tour Summary */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Camera className="w-5 h-5 text-primary" />
+                  Tour Overview
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground leading-relaxed">
+                  {tour.summary}
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Description */}
+            <Card>
+              <CardHeader>
+                <CardTitle>About This Adventure</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div
+                  className="prose prose-sm max-w-none dark:prose-invert"
+                  dangerouslySetInnerHTML={{ __html: tour.description }}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Itinerary */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-primary" />
+                  Detailed Itinerary
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Accordion type="multiple" className="w-full">
+                  {itinerary?.map((item, index) => (
+                    <AccordionItem value={`item-${index}`} key={index}>
+                      <AccordionTrigger className="text-left">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <span className="text-sm font-semibold text-primary">
+                              {index + 1}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="font-semibold">{item.time}</div>
+                          </div>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pl-11">
+                        <p className="text-muted-foreground">{item.details}</p>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </CardContent>
+            </Card>
+
+            {/* What&apos;s Included/Excluded */}
+            <Card>
+              <CardHeader>
+                <CardTitle>What to Expect</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="included" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger
+                      value="included"
+                      className="flex items-center gap-2"
+                    >
+                      <Check className="w-4 h-4" />
+                      What&apos;s Included
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="excluded"
+                      className="flex items-center gap-2"
+                    >
+                      <X className="w-4 h-4" />
+                      What&apos;s Not Included
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="included" className="mt-6">
+                    <div className="grid gap-3">
+                      {inclusive?.map((item, index) => (
+                        <div
+                          key={index}
+                          className="flex items-start gap-3 p-3 rounded-lg bg-green-50 dark:bg-green-950/20"
+                        >
+                          <Check className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm">{item.item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="excluded" className="mt-6">
+                    <div className="grid gap-3">
+                      {exclusive?.map((item, index) => (
+                        <div
+                          key={index}
+                          className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-950/20"
+                        >
+                          <X className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm">{item.item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
+
+            {/* Safety & Guidelines */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-primary" />
+                  Safety & Guidelines
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold mb-1">Physical Fitness</h4>
+                      <p className="text-sm text-muted-foreground">
+                        This is a {tour.difficulty} level hike. Ensure
+                        you&apos;re physically prepared for the challenge.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold mb-1">Weather Conditions</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Check weather conditions before departure. Tours may be
+                        rescheduled for safety.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold mb-1">Group Safety</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Stay with the group and follow your guide&apos;s
+                        instructions at all times.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Sidebar - Booking */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-6 space-y-6">
+              {/* Pricing Card */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Book Your Adventure</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Pricing */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 rounded-lg bg-primary text-primary-foreground">
+                      <div className="text-sm font-medium opacity-90">
+                        Full Price
+                      </div>
+                      <div className="text-2xl font-bold">
+                        KES {tour.price.toLocaleString()}
+                      </div>
+                    </div>
+                    <div className="text-center p-4 rounded-lg bg-secondary text-secondary-foreground">
+                      <div className="text-sm font-medium">Booking Fee</div>
+                      <div className="text-2xl font-bold">
+                        KES {tour.booking.toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  {/* Quick Stats */}
+                  <div className="grid grid-cols-2 gap-4 text-center">
+                    <div>
+                      <div className="text-2xl font-bold text-primary">
+                        {tour.rating}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Rating
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold text-primary">
+                        {tour.hikeType === "day-hike" ? "1" : "2+"}
+                      </div>
+                      <div className="text-sm text-muted-foreground">Days</div>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  {/* Payment Methods */}
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-center">
+                      Payment Options
+                    </h3>
+                    <div className="relative w-full max-w-[200px] mx-auto">
+                      <Image
+                        src={safaricom}
+                        alt="M-Pesa Payment"
+                        className="rounded-lg"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Booking Buttons */}
+                  <div className="space-y-3">
+                    <Button
+                      className="w-full bg-[#25D366] hover:bg-[#25D366]/90 text-white"
+                      size="lg"
+                    >
+                      <a
+                        className="flex w-full items-center justify-center gap-3"
+                        href={`https://wa.me/+254703371240?text=Hello! I&apos;m interested in booking the ${tour.tourName} hike. Could you please provide more details?`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <FaWhatsapp className="text-xl" />
+                        Book via WhatsApp
+                      </a>
+                    </Button>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="w-full" size="lg">
+                          <Mail className="w-4 h-4 mr-2" />
+                          Book via Form
+                        </Button>
+                      </DialogTrigger>
+                      <TourBooking tourName={tour.tourName} />
+                    </Dialog>
+                  </div>
+
+                  {/* Additional Actions */}
+                  <div className="flex gap-2 pt-4">
+                    <Button variant="ghost" size="sm" className="flex-1">
+                      <Heart className="w-4 h-4 mr-2" />
+                      Save
+                    </Button>
+                    <Button variant="ghost" size="sm" className="flex-1">
+                      <Share2 className="w-4 h-4 mr-2" />
+                      Share
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Guide Info */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Your Guide</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-4">
+                    <Avatar className="w-12 h-12">
+                      <AvatarImage src="/guide-avatar.jpg" />
+                      <AvatarFallback>TF</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <div className="font-semibold">Tumaini Fitness Team</div>
+                      <div className="text-sm text-muted-foreground">
+                        Certified Mountain Guide
+                      </div>
+                      <div className="flex items-center gap-1 mt-1">
+                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                        <span className="text-sm">4.9 • 200+ tours</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };

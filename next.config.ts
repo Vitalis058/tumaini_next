@@ -11,8 +11,8 @@ const nextConfig: NextConfig = {
         pathname: "/**", // Allows all paths under this hostname
       },
       {
-        protocol: "http",
-        hostname: "res.cloudinary.com",
+        protocol: "https",
+        hostname: "images.unsplash.com",
         port: "", // Leave blank to allow all ports
         pathname: "/**", // Allows all paths under this hostname
       },

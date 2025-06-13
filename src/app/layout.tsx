@@ -1,95 +1,97 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { Inter } from "next/font/google";
-import Navbar from "@/components/NavBar/Navbar";
-import { cn } from "@/lib/utils";
-import QueryProvider from "@/components/QueryProvider";
 import Footer from "@/components/Footer/Footer";
+import Navbar from "@/components/NavBar/Navbar";
+import QueryProvider from "@/components/QueryProvider";
 import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from "next-themes";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import {
+  generateMetadata,
+  generateOrganizationSchema,
+  SEO_CONFIG,
+} from "@/lib/seo";
+import { cn } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import type { Metadata } from "next";
+import { ThemeProvider } from "next-themes";
+import { Inter } from "next/font/google";
+import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
-export const metadata: Metadata = {
-  title: "Tumaini Fitness | Premier Hiking Tours and Adventure Experiences",
-  description:
-    "Join Tumaini Fitness for expert-led hiking tours, summit adventures, and scenic trail explorations. Ideal for all fitness levels, we create memorable outdoor experiences that connect you with nature.",
-  keywords: [
-    "Tumaini Fitness",
-    "hiking tours",
-    "summit hikes",
-    "scenic trails",
-    "adventure fitness",
-    "nature tours",
-    "outdoor experiences",
-    "hiking",
-    "hikes",
-    "mt kenya",
-    "kenya",
-    "aberdares",
-    "7 ponds",
-  ],
-  openGraph: {
-    title: "Tumaini Fitness | Hiking Tours & Adventure Experiences",
-    description:
-      "Discover the best hiking tours and adventure experiences with Tumaini Fitness. Safe and memorable outdoor journeys for all levels.",
-    url: "https://tumainifitness.co.ke",
-    siteName: "Tumaini Fitness",
-    images: [
-      {
-        url: "/public/image/tumainiFitnessChooseUs.jpg", // Replace with an actual image
-        width: 1200,
-        height: 630,
-        alt: "Tumaini Fitness - Hiking and Adventure",
-      },
-    ],
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Tumaini Fitness | Hiking Tours & Adventures",
-    description:
-      "Join Tumaini Fitness for safe and exciting hiking tours across scenic trails and summits.",
-    images: ["/public/image/tumaini hikers bg-01.png"], // Replace with an actual image
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+export const metadata: Metadata = generateMetadata({});
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const organizationSchema = generateOrganizationSchema();
+
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <head>
-        {/* Favicon */}
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        {/* Preconnect to external domains */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+
+        {/* DNS prefetch for performance */}
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+        <link rel="dns-prefetch" href="https://vercel.live" />
+
+        {/* Favicon and app icons */}
+        <link rel="icon" href="/favicon.ico" sizes="32x32" />
+        <link rel="icon" href="/icon.png" type="image/png" sizes="192x192" />
+        <link rel="apple-touch-icon" href="/icon.png" />
+
+        {/* Manifest for PWA */}
+        <link rel="manifest" href="/manifest.json" />
+
+        {/* Theme color */}
+        <meta name="theme-color" content="#16a34a" />
+        <meta name="msapplication-TileColor" content="#16a34a" />
+
+        {/* Viewport and compatibility */}
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+        />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
 
-        {/* Open Graph Meta Tags */}
-        <meta property="og:type" content="website" />
+        {/* Security headers */}
+        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
         <meta
-          property="og:title"
-          content="Tumaini Fitness | Premier Hiking Tours"
+          httpEquiv="Referrer-Policy"
+          content="strict-origin-when-cross-origin"
         />
-        <meta
-          property="og:description"
-          content="Join Tumaini Fitness for expert-led hiking tours and scenic trail explorations. Perfect for adventurers of all levels."
+
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
         />
-        <meta property="og:url" content="https://tumainifitness.co.ke" />
-        <meta
-          property="og:image"
-          content="/public/image/tumaini hikers bg-01.png"
-        />
+
+        {/* Additional meta tags for better SEO */}
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content={SEO_CONFIG.siteName} />
+
+        {/* Verification tags (add your actual verification codes) */}
+        {/* <meta name="google-site-verification" content="your-google-verification-code" /> */}
+        {/* <meta name="msvalidate.01" content="your-bing-verification-code" /> */}
       </head>
-      <body className={cn(inter.className)}>
+      <body className={cn(inter.className, "antialiased")}>
         <QueryProvider>
           <ThemeProvider
             attribute="class"
@@ -97,19 +99,45 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            {/* Skip to main content for accessibility */}
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-primary-foreground px-4 py-2 rounded-md z-50"
+            >
+              Skip to main content
+            </a>
+
             <Navbar />
+
             <main
-              className="mx-auto w-full px-3 md:max-w-[95%] lg:max-w-[1200px]"
+              id="main-content"
+              className="mx-auto w-full px-3 md:max-w-[95%] lg:max-w-[1200px] min-h-screen"
               role="main"
             >
               {children}
             </main>
+
             <Footer />
             <Toaster />
           </ThemeProvider>
         </QueryProvider>
+
+        {/* Performance monitoring */}
         <SpeedInsights />
         <Analytics />
+
+        {/* Service Worker Registration */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js');
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );

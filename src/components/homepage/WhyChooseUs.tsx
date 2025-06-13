@@ -1,62 +1,148 @@
-import { Calendar, Mountain, SquareLibrary } from "lucide-react";
-import chooseUs from "./../../../public/image/tumainiFitnessChooseUs.jpg";
+import { Calendar, Mountain, Shield } from "lucide-react";
 import Image from "next/image";
 import { FaHiking } from "react-icons/fa";
+import chooseUs from "./../../../public/image/tumainiFitnessChooseUs.jpg";
 
 function WhyChooseUs() {
-  return (
-    <div className="flex gap-10 flex-col md:flex-row bg-muted p-5 rounded-lg">
-      <div className="flex-1 space-y-5">
-        <h1 className={`md:text-3xl text-xl font-bold text-greenPrimary`}>
-          Why Choose Us
-        </h1>
-        <p className="text-sm">
-          Choose Tumaini Fitness for your next adventure, where we blend
-          expertise and passion to offer unforgettable hiking experiences. Our
-          commitment to safety, personal growth, and environmental stewardship
-          ensures that every trek not only invigorates your body but also
-          enriches your spirit.
-        </p>
+  const features = [
+    {
+      icon: <FaHiking className="text-white" size={24} />,
+      title: "Trail Blazing Adventures",
+      description: "Explore uncharted paths and discover hidden gems",
+    },
+    {
+      icon: <Calendar className="text-white" size={24} />,
+      title: "Year Round Adventures",
+      description: "Adventure awaits in every season",
+    },
+    {
+      icon: <Mountain className="text-white" size={24} />,
+      title: "Breathtaking Landscapes",
+      description: "Experience Kenya&apos;s most stunning natural beauty",
+    },
+    {
+      icon: <Shield className="text-white" size={24} />,
+      title: "Safety First Approach",
+      description: "Professional guides and comprehensive safety measures",
+    },
+  ];
 
-        <div className="space-y-3 md:text-base text-sm">
-          <span className="flex items-center gap-3">
-            <span className="rounded-full bg-primary p-2">
-              <FaHiking className="text-muted" size={20} />
-            </span>
-            <span className="font-semibold">Trail blazing adventures</span>
-          </span>
-          <span className="flex items-center gap-3">
-            <span className="rounded-full bg-primary p-2">
-              <Calendar className="text-muted" />
-            </span>
-            <span className="font-semibold">Year round adventures</span>
-          </span>
-          <span className="flex items-center gap-3">
-            <span className="rounded-full bg-primary p-2">
-              <Mountain className="text-muted" />
-            </span>
-            <span className="font-semibold">
-              Explore breathtaking landscapes and hidden gems
-            </span>
-          </span>
-          <span className="flex items-center gap-3">
-            <span className="rounded-full bg-primary p-2">
-              <SquareLibrary className="text-muted" />
-            </span>
-            <span className="font-semibold">
-              Create lasting memories with every hike
-            </span>
-          </span>
+  return (
+    <div className="relative">
+      {/* Section Header */}
+      <div className="text-center mb-16">
+        <div className="inline-flex items-center px-4 py-2 rounded-full bg-greenPrimary/10 text-greenPrimary text-sm font-medium mb-4">
+          <span className="w-2 h-2 bg-greenPrimary rounded-full mr-2"></span>
+          Why Choose Us
         </div>
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+          Your Adventure Partner
+        </h2>
+        <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          Choose Tumaini Fitness for your next adventure, where we blend
+          expertise and passion to offer unforgettable hiking experiences that
+          invigorate your body and enrich your spirit.
+        </p>
       </div>
 
-      <div className=" flex-1 md:block relative min-h-40">
-        <Image
-          src={chooseUs}
-          alt="why choose tumaini fitness image"
-          className="h-[80%] rounded-lg object-cover"
-          fill
-        />
+      {/* Main Content */}
+      <div className="grid lg:grid-cols-2 gap-12 items-center">
+        {/* Features Grid */}
+        <div className="space-y-8">
+          <div className="grid sm:grid-cols-2 gap-6">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className="group p-6 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-xl 
+                          transition-all duration-300 hover:-translate-y-2"
+              >
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0">
+                    <div
+                      className="w-12 h-12 rounded-xl bg-gradient-to-br from-greenPrimary to-deepBlue 
+                                  flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                    >
+                      {feature.icon}
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3
+                      className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-greenPrimary 
+                                  transition-colors duration-300"
+                    >
+                      {feature.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Additional Info */}
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-greenPrimary/5 to-deepBlue/5 border border-greenPrimary/10">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-8 h-8 rounded-full bg-greenPrimary flex items-center justify-center">
+                <span className="text-white text-sm font-bold">✓</span>
+              </div>
+              <h4 className="text-lg font-semibold text-gray-900">
+                Commitment to Excellence
+              </h4>
+            </div>
+            <p className="text-gray-600 leading-relaxed">
+              Our dedication to safety, personal growth, and environmental
+              stewardship ensures that every trek creates lasting memories while
+              respecting nature.
+            </p>
+          </div>
+        </div>
+
+        {/* Image Section */}
+        <div className="relative">
+          <div className="relative h-[600px] rounded-2xl overflow-hidden shadow-2xl">
+            <Image
+              src={chooseUs}
+              alt="Tumaini Fitness adventure experience"
+              fill
+              className="object-cover"
+            />
+
+            {/* Image Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+
+            {/* Stats Overlay */}
+            <div className="absolute bottom-6 left-6 right-6">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                <div className="grid grid-cols-3 gap-4 text-center text-white">
+                  <div>
+                    <div className="text-2xl font-bold">98%</div>
+                    <div className="text-xs uppercase tracking-wide opacity-80">
+                      Satisfaction
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold">5+</div>
+                    <div className="text-xs uppercase tracking-wide opacity-80">
+                      Years Experience
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold">24/7</div>
+                    <div className="text-xs uppercase tracking-wide opacity-80">
+                      Support
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Decorative Elements */}
+          <div className="absolute -top-4 -right-4 w-24 h-24 bg-deepBlue/10 rounded-full blur-xl"></div>
+          <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-greenPrimary/10 rounded-full blur-xl"></div>
+        </div>
       </div>
     </div>
   );
