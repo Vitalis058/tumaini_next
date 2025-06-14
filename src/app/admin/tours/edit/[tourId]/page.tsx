@@ -1,17 +1,104 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { format, parseISO } from "date-fns";
-import { ArrowLeft, Plus, Trash2, Upload, X } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowLeft,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  ImageIcon,
+  Loader2,
+  MapPin,
+  Mountain,
+  Plus,
+  Save,
+  Star,
+  Trash2,
+  Upload,
+  Users,
+  X,
+  XCircle,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
+
+// Zod schema for form validation
+const tourSchema = z.object({
+  tourName: z
+    .string()
+    .min(1, "Tour name is required")
+    .max(100, "Tour name too long"),
+  location: z
+    .string()
+    .min(1, "Location is required")
+    .max(100, "Location too long"),
+  price: z.number().min(0, "Price must be positive"),
+  booking: z.number().min(0, "Booking count must be positive"),
+  rating: z
+    .number()
+    .min(1, "Rating must be at least 1")
+    .max(5, "Rating cannot exceed 5"),
+  difficulty: z.enum([
+    "Easy",
+    "Moderate",
+    "Advanced",
+    "Challenging",
+    "Strenuous",
+  ]),
+  level: z.enum([
+    "Child-friendly",
+    "Beginner",
+    "Intermediate",
+    "Advanced",
+    "Expert",
+  ]),
+  hikeType: z.enum(["Day Hike", "Multi-day", "Summit", "Trail", "Adventure"]),
+  date: z.date({ required_error: "Tour date is required" }),
+  summary: z
+    .string()
+    .min(10, "Summary must be at least 10 characters")
+    .max(500, "Summary too long"),
+  description: z.string().min(20, "Description must be at least 20 characters"),
+  images: z.array(z.string()).min(1, "At least one image is required"),
+  itinerary: z
+    .array(
+      z.object({
+        time: z.string().min(1, "Time is required"),
+        details: z.string().min(1, "Details are required"),
+      })
+    )
+    .min(1, "At least one itinerary item is required"),
+  inclusive: z
+    .array(z.object({ value: z.string().min(1, "Item cannot be empty") }))
+    .min(1, "At least one included item is required"),
+  exclusive: z
+    .array(z.object({ value: z.string().min(1, "Item cannot be empty") }))
+    .min(1, "At least one excluded item is required"),
+});
+
+type TourFormData = z.infer<typeof tourSchema>;
 
 interface ItineraryItem {
   time: string;
@@ -33,37 +120,72 @@ interface Tour {
   description: string;
   summary: string;
   itinerary: ItineraryItem[];
-  inclusive: string[];
-  exclusive: string[];
+  inclusive: { value: string }[];
+  exclusive: { value: string }[];
 }
 
 export default function EditTour() {
   const router = useRouter();
   const [tour, setTour] = useState<Tour | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [deletingImages, setDeletingImages] = useState<Set<number>>(new Set());
 
-  // Form state
-  const [tourName, setTourName] = useState("");
-  const [price, setPrice] = useState("");
-  const [booking, setBooking] = useState("");
-  const [images, setImages] = useState<string[]>([]);
-  const [rating, setRating] = useState("");
-  const [difficulty, setDifficulty] = useState("");
-  const [level, setLevel] = useState("");
-  const [hikeType, setHikeType] = useState("");
-  const [location, setLocation] = useState("");
-  const [date, setDate] = useState<Date>();
-  const [description, setDescription] = useState("");
-  const [summary, setSummary] = useState("");
-  const [itinerary, setItinerary] = useState<ItineraryItem[]>([]);
-  const [inclusive, setInclusive] = useState<string[]>([]);
-  const [exclusive, setExclusive] = useState<string[]>([]);
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting, isDirty },
+  } = useForm<TourFormData>({
+    resolver: zodResolver(tourSchema),
+    defaultValues: {
+      tourName: "",
+      location: "",
+      price: 0,
+      booking: 0,
+      rating: 5,
+      difficulty: "Easy",
+      level: "Beginner",
+      hikeType: "Day Hike",
+      summary: "",
+      description: "",
+      images: [],
+      itinerary: [],
+      inclusive: [],
+      exclusive: [],
+    },
+  });
 
-  // New item states
-  const [newItineraryItem, setNewItineraryItem] = useState<ItineraryItem>({
+  const {
+    fields: itineraryFields,
+    append: appendItinerary,
+    remove: removeItinerary,
+  } = useFieldArray({
+    control,
+    name: "itinerary",
+  });
+
+  const {
+    fields: inclusiveFields,
+    append: appendInclusive,
+    remove: removeInclusive,
+  } = useFieldArray({
+    control,
+    name: "inclusive",
+  });
+
+  const {
+    fields: exclusiveFields,
+    append: appendExclusive,
+    remove: removeExclusive,
+  } = useFieldArray({
+    control,
+    name: "exclusive",
+  });
+
+  const watchedImages = watch("images");
+  const [newItineraryItem, setNewItineraryItem] = useState({
     time: "",
     details: "",
   });
@@ -80,49 +202,61 @@ export default function EditTour() {
         const data = await response.json();
         setTour(data);
 
-        // Populate form fields
-        setTourName(data.tourName);
-        setPrice(data.price.toString());
-        setBooking(data.booking.toString());
-        setImages(Array.isArray(data.images) ? data.images : []);
-        setRating(data.rating.toString());
-        setDifficulty(data.difficulty);
-        setLevel(data.level);
-        setHikeType(data.hikeType);
-        setLocation(data.location);
+        // Populate form with fetched data
+        setValue("tourName", data.tourName);
+        setValue("location", data.location);
+        setValue("price", Number(data.price));
+        setValue("booking", Number(data.booking));
+        setValue("rating", Number(data.rating));
+        setValue("difficulty", data.difficulty);
+        setValue("level", data.level);
+        setValue("hikeType", data.hikeType);
+        setValue("summary", data.summary);
+        setValue("description", data.description);
+        setValue("images", Array.isArray(data.images) ? data.images : []);
+        setValue(
+          "itinerary",
+          Array.isArray(data.itinerary) ? data.itinerary : []
+        );
+        setValue(
+          "inclusive",
+          Array.isArray(data.inclusive)
+            ? data.inclusive.map(
+                (item: string | { item: string; value: string }) => ({
+                  value:
+                    typeof item === "string"
+                      ? item
+                      : item.value || item.item || "",
+                })
+              )
+            : []
+        );
+        setValue(
+          "exclusive",
+          Array.isArray(data.exclusive)
+            ? data.exclusive.map(
+                (item: string | { item: string; value: string }) => ({
+                  value:
+                    typeof item === "string"
+                      ? item
+                      : item.value || item.item || "",
+                })
+              )
+            : []
+        );
 
-        // Parse the date string to Date object
+        // Parse and set date
         try {
           if (data.date) {
-            // Handle different date formats
             const parsedDate = data.date.includes("T")
               ? parseISO(data.date)
               : new Date(data.date);
-            setDate(parsedDate);
+            setValue("date", parsedDate);
           }
         } catch (error) {
           console.error("Error parsing date:", error);
-          // Fallback to current date if parsing fails
-          setDate(new Date());
+          setValue("date", new Date());
         }
-
-        setDescription(data.description);
-        setSummary(data.summary);
-        setItinerary(Array.isArray(data.itinerary) ? data.itinerary : []);
-        setInclusive(
-          Array.isArray(data.inclusive)
-            ? data.inclusive.map((item: { item: string } | string) =>
-                typeof item === "string" ? item : item.item
-              )
-            : []
-        );
-        setExclusive(
-          Array.isArray(data.exclusive)
-            ? data.exclusive.map((item: { item: string } | string) =>
-                typeof item === "string" ? item : item.item
-              )
-            : []
-        );
       } catch (error) {
         console.error("Error fetching tour:", error);
         toast.error("Failed to load tour data");
@@ -132,38 +266,7 @@ export default function EditTour() {
     };
 
     fetchTour();
-  }, []);
-
-  const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    switch (name) {
-      case "tourName":
-        setTourName(value);
-        break;
-      case "price":
-        setPrice(value);
-        break;
-      case "booking":
-        setBooking(value);
-        break;
-      case "rating":
-        setRating(value);
-        break;
-      case "location":
-        setLocation(value);
-        break;
-      case "description":
-        setDescription(value);
-        break;
-      case "summary":
-        setSummary(value);
-        break;
-    }
-  };
+  }, [setValue]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -180,10 +283,7 @@ export default function EditTour() {
           body: formData,
         });
 
-        if (!response.ok) {
-          throw new Error("Upload failed");
-        }
-
+        if (!response.ok) throw new Error("Upload failed");
         const data = await response.json();
         return data.url;
       } catch (error) {
@@ -200,7 +300,10 @@ export default function EditTour() {
       );
 
       if (validUrls.length > 0) {
-        setImages((prev) => [...prev, ...validUrls]);
+        const currentImages = watch("images");
+        setValue("images", [...currentImages, ...validUrls], {
+          shouldDirty: true,
+        });
         toast.success(`Successfully uploaded ${validUrls.length} image(s)`);
       }
     } catch (error) {
@@ -208,7 +311,6 @@ export default function EditTour() {
       toast.error("Failed to upload images");
     } finally {
       setUploading(false);
-      // Reset the input
       e.target.value = "";
     }
   };
@@ -245,9 +347,7 @@ export default function EditTour() {
 
       const response = await fetch("/api/upload", {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ publicId }),
       });
 
@@ -266,13 +366,15 @@ export default function EditTour() {
   };
 
   const removeImage = async (index: number) => {
-    const imageUrl = images[index];
+    const currentImages = watch("images");
+    const imageUrl = currentImages[index];
     setDeletingImages((prev) => new Set(prev).add(index));
 
     try {
       const deleted = await deleteImageFromCloudinary(imageUrl);
       if (deleted) {
-        setImages((prev) => prev.filter((_, i) => i !== index));
+        const newImages = currentImages.filter((_, i) => i !== index);
+        setValue("images", newImages, { shouldDirty: true });
         toast.success("Image deleted successfully");
       } else {
         toast.error("Failed to delete image from cloud storage");
@@ -289,73 +391,37 @@ export default function EditTour() {
     }
   };
 
-  const addListItem = (type: "itinerary" | "inclusive" | "exclusive") => {
-    if (
-      type === "itinerary" &&
-      newItineraryItem.time.trim() &&
-      newItineraryItem.details.trim()
-    ) {
-      setItinerary([...itinerary, { ...newItineraryItem }]);
+  const addItineraryItem = () => {
+    if (newItineraryItem.time.trim() && newItineraryItem.details.trim()) {
+      appendItinerary({ ...newItineraryItem });
       setNewItineraryItem({ time: "", details: "" });
-    } else if (type === "inclusive" && newInclusiveItem.trim()) {
-      setInclusive([...inclusive, newInclusiveItem.trim()]);
+    }
+  };
+
+  const addInclusiveItem = () => {
+    if (newInclusiveItem.trim()) {
+      appendInclusive({ value: newInclusiveItem.trim() });
       setNewInclusiveItem("");
-    } else if (type === "exclusive" && newExclusiveItem.trim()) {
-      setExclusive([...exclusive, newExclusiveItem.trim()]);
+    }
+  };
+
+  const addExclusiveItem = () => {
+    if (newExclusiveItem.trim()) {
+      appendExclusive({ value: newExclusiveItem.trim() });
       setNewExclusiveItem("");
     }
   };
 
-  const removeListItem = (
-    type: "itinerary" | "inclusive" | "exclusive",
-    index: number
-  ) => {
-    if (type === "itinerary") {
-      setItinerary(itinerary.filter((_, i) => i !== index));
-    } else if (type === "inclusive") {
-      setInclusive(inclusive.filter((_, i) => i !== index));
-    } else if (type === "exclusive") {
-      setExclusive(exclusive.filter((_, i) => i !== index));
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!date) {
-      toast.error("Please select a tour date");
-      return;
-    }
-
-    if (images.length === 0) {
-      toast.error("Please upload at least one image");
-      return;
-    }
-
-    setSaving(true);
-
+  const onSubmit = async (data: TourFormData) => {
     try {
       const response = await fetch(`/api/tours/${tour?.id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          tourName,
-          price,
-          booking,
-          images,
-          rating,
-          difficulty,
-          level,
-          hikeType,
-          location,
-          date: format(date, "yyyy-MM-dd"),
-          description,
-          summary,
-          itinerary,
-          inclusive,
-          exclusive,
+          ...data,
+          date: format(data.date, "yyyy-MM-dd"),
+          inclusive: data.inclusive.map((i) => i.value),
+          exclusive: data.exclusive.map((i) => i.value),
         }),
       });
 
@@ -363,221 +429,460 @@ export default function EditTour() {
         toast.success("Tour updated successfully!");
         router.push("/admin/dashboard");
       } else {
-        const data = await response.json();
-        toast.error(data.error || "Failed to update tour");
+        const errorData = await response.json();
+        toast.error(errorData.error || "Failed to update tour");
       }
-    } catch {
+    } catch (error) {
+      console.error("Submit error:", error);
       toast.error("An error occurred. Please try again.");
-    } finally {
-      setSaving(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      <div className="min-h-screen bg-background">
+        <div className="flex items-center justify-center min-h-screen">
+          <Card className="p-8">
+            <div className="flex flex-col items-center space-y-4">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="text-muted-foreground">Loading tour data...</p>
+            </div>
+          </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="flex items-center gap-4 mb-6">
-          <Button
-            variant="outline"
-            onClick={() => router.back()}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </Button>
-          <h1 className="text-3xl font-bold">Edit Tour</h1>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="tourName">Tour Name *</Label>
-                  <Input
-                    id="tourName"
-                    name="tourName"
-                    value={tourName}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="location">Location *</Label>
-                  <Input
-                    id="location"
-                    name="location"
-                    value={location}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="price">Price (KES) *</Label>
-                  <Input
-                    id="price"
-                    name="price"
-                    type="number"
-                    step="0.01"
-                    value={price}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="booking">Current Bookings</Label>
-                  <Input
-                    id="booking"
-                    name="booking"
-                    type="number"
-                    value={booking}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="rating">Rating (1-5)</Label>
-                  <Input
-                    id="rating"
-                    name="rating"
-                    type="number"
-                    min="1"
-                    max="5"
-                    value={rating}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="bg-card border-b shadow-sm sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="outline"
+                onClick={() => router.back()}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Dashboard
+              </Button>
               <div>
-                <Label htmlFor="date">Tour Date *</Label>
-                <DatePicker
-                  date={date}
-                  onDateChange={setDate}
-                  placeholder="Select tour date"
-                  className="mt-1"
+                <h1 className="text-2xl md:text-3xl font-bold text-card-foreground">
+                  Edit Tour
+                </h1>
+                <p className="text-muted-foreground">
+                  Update your tour details and settings
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              {isDirty && (
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3 text-primary" />
+                  Unsaved changes
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          {/* Basic Information */}
+          <Card className="shadow-lg">
+            <CardHeader className="bg-primary text-primary-foreground rounded-t-lg">
+              <CardTitle className="flex items-center gap-2">
+                <Mountain className="h-5 w-5" />
+                Basic Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="tourName" className="flex items-center gap-2">
+                    <Mountain className="h-4 w-4" />
+                    Tour Name *
+                  </Label>
+                  <Controller
+                    name="tourName"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        id="tourName"
+                        placeholder="Enter tour name"
+                        className={errors.tourName ? "border-destructive" : ""}
+                      />
+                    )}
+                  />
+                  {errors.tourName && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <XCircle className="h-3 w-3" />
+                      {errors.tourName.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="location" className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    Location *
+                  </Label>
+                  <Controller
+                    name="location"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        id="location"
+                        placeholder="Enter location"
+                        className={errors.location ? "border-destructive" : ""}
+                      />
+                    )}
+                  />
+                  {errors.location && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <XCircle className="h-3 w-3" />
+                      {errors.location.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="price" className="flex items-center gap-2">
+                    <DollarSign className="h-4 w-4" />
+                    Price (KES) *
+                  </Label>
+                  <Controller
+                    name="price"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        id="price"
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className={errors.price ? "border-destructive" : ""}
+                      />
+                    )}
+                  />
+                  {errors.price && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <XCircle className="h-3 w-3" />
+                      {errors.price.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="booking" className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    Current Bookings
+                  </Label>
+                  <Controller
+                    name="booking"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        id="booking"
+                        type="number"
+                        placeholder="0"
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className={errors.booking ? "border-destructive" : ""}
+                      />
+                    )}
+                  />
+                  {errors.booking && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <XCircle className="h-3 w-3" />
+                      {errors.booking.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="rating" className="flex items-center gap-2">
+                    <Star className="h-4 w-4" />
+                    Rating (1-5)
+                  </Label>
+                  <Controller
+                    name="rating"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        id="rating"
+                        type="number"
+                        min="1"
+                        max="5"
+                        step="0.1"
+                        placeholder="5.0"
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className={errors.rating ? "border-destructive" : ""}
+                      />
+                    )}
+                  />
+                  {errors.rating && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <XCircle className="h-3 w-3" />
+                      {errors.rating.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  Tour Date *
+                </Label>
+                <Controller
+                  name="date"
+                  control={control}
+                  render={({ field }) => (
+                    <DatePicker
+                      date={field.value}
+                      onDateChange={field.onChange}
+                      placeholder="Select tour date"
+                      className={errors.date ? "border-destructive" : ""}
+                    />
+                  )}
                 />
+                {errors.date && (
+                  <p className="text-sm text-destructive flex items-center gap-1">
+                    <XCircle className="h-3 w-3" />
+                    {errors.date.message}
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
 
           {/* Tour Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Tour Details</CardTitle>
+          <Card className="shadow-lg">
+            <CardHeader className="bg-secondary text-secondary-foreground rounded-t-lg">
+              <CardTitle className="flex items-center gap-2">
+                <Mountain className="h-5 w-5" />
+                Tour Details
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="difficulty">Difficulty</Label>
-                  <select
-                    id="difficulty"
+            <CardContent className="p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="difficulty">Difficulty Level</Label>
+                  <Controller
                     name="difficulty"
-                    value={difficulty}
-                    onChange={(e) => setDifficulty(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                  >
-                    <option value="Easy">Easy</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Hard">Hard</option>
-                    <option value="Expert">Expert</option>
-                  </select>
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger
+                          className={
+                            errors.difficulty ? "border-destructive" : ""
+                          }
+                        >
+                          <SelectValue placeholder="Select difficulty" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Easy">Easy</SelectItem>
+                          <SelectItem value="Moderate">Moderate</SelectItem>
+                          <SelectItem value="Advanced">Advanced</SelectItem>
+                          <SelectItem value="Challenging">
+                            Challenging
+                          </SelectItem>
+                          <SelectItem value="Strenuous">Strenuous</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.difficulty && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <XCircle className="h-3 w-3" />
+                      {errors.difficulty.message}
+                    </p>
+                  )}
                 </div>
-                <div>
-                  <Label htmlFor="level">Level</Label>
-                  <select
-                    id="level"
+
+                <div className="space-y-2">
+                  <Label htmlFor="level">Experience Level</Label>
+                  <Controller
                     name="level"
-                    value={level}
-                    onChange={(e) => setLevel(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                  >
-                    <option value="Beginner">Beginner</option>
-                    <option value="Intermediate">Intermediate</option>
-                    <option value="Advanced">Advanced</option>
-                    <option value="Expert">Expert</option>
-                  </select>
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger
+                          className={errors.level ? "border-destructive" : ""}
+                        >
+                          <SelectValue placeholder="Select level" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Child-friendly">
+                            Child-friendly
+                          </SelectItem>
+                          <SelectItem value="Beginner">Beginner</SelectItem>
+                          <SelectItem value="Intermediate">
+                            Intermediate
+                          </SelectItem>
+                          <SelectItem value="Advanced">Advanced</SelectItem>
+                          <SelectItem value="Expert">Expert</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.level && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <XCircle className="h-3 w-3" />
+                      {errors.level.message}
+                    </p>
+                  )}
                 </div>
-                <div>
+
+                <div className="space-y-2">
                   <Label htmlFor="hikeType">Hike Type</Label>
-                  <select
-                    id="hikeType"
+                  <Controller
                     name="hikeType"
-                    value={hikeType}
-                    onChange={(e) => setHikeType(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                  >
-                    <option value="Day Hike">Day Hike</option>
-                    <option value="Multi-day">Multi-day</option>
-                    <option value="Summit">Summit</option>
-                    <option value="Trail">Trail</option>
-                  </select>
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger
+                          className={
+                            errors.hikeType ? "border-destructive" : ""
+                          }
+                        >
+                          <SelectValue placeholder="Select hike type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Day Hike">Day Hike</SelectItem>
+                          <SelectItem value="Multi-day">Multi-day</SelectItem>
+                          <SelectItem value="Summit">Summit</SelectItem>
+                          <SelectItem value="Trail">Trail</SelectItem>
+                          <SelectItem value="Adventure">Adventure</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.hikeType && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <XCircle className="h-3 w-3" />
+                      {errors.hikeType.message}
+                    </p>
+                  )}
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="summary">Summary</Label>
-                <Textarea
-                  id="summary"
+              <div className="space-y-2">
+                <Label htmlFor="summary">Tour Summary *</Label>
+                <Controller
                   name="summary"
-                  value={summary}
-                  onChange={handleInputChange}
-                  rows={3}
+                  control={control}
+                  render={({ field }) => (
+                    <Textarea
+                      {...field}
+                      id="summary"
+                      placeholder="Brief summary of the tour..."
+                      rows={3}
+                      className={errors.summary ? "border-destructive" : ""}
+                    />
+                  )}
                 />
+                {errors.summary && (
+                  <p className="text-sm text-destructive flex items-center gap-1">
+                    <XCircle className="h-3 w-3" />
+                    {errors.summary.message}
+                  </p>
+                )}
               </div>
 
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
+              <div className="space-y-2">
+                <Label htmlFor="description">Detailed Description *</Label>
+                <Controller
                   name="description"
-                  value={description}
-                  onChange={handleInputChange}
-                  rows={5}
+                  control={control}
+                  render={({ field }) => (
+                    <Textarea
+                      {...field}
+                      id="description"
+                      placeholder="Detailed description of the tour experience..."
+                      rows={6}
+                      className={errors.description ? "border-destructive" : ""}
+                    />
+                  )}
                 />
+                {errors.description && (
+                  <p className="text-sm text-destructive flex items-center gap-1">
+                    <XCircle className="h-3 w-3" />
+                    {errors.description.message}
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
 
-          {/* Lists */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Images, Itinerary, and Lists */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Images */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Images</CardTitle>
+            <Card className="shadow-lg">
+              <CardHeader className="bg-primary text-primary-foreground rounded-t-lg">
+                <CardTitle className="flex items-center gap-2">
+                  <ImageIcon className="h-5 w-5" />
+                  Tour Images *
+                </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 <div className="space-y-4">
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-4">
                     <input
                       type="file"
                       multiple
                       accept="image/*"
                       onChange={handleFileUpload}
                       disabled={uploading}
+                      className="hidden"
+                      id="image-upload"
                     />
+                    <Label
+                      htmlFor="image-upload"
+                      className={`flex items-center gap-2 px-4 py-2 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted dark:hover:bg-muted/50 transition-colors ${
+                        uploading ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
+                    >
+                      {uploading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Upload className="h-4 w-4" />
+                      )}
+                      {uploading ? "Uploading..." : "Upload Images"}
+                    </Label>
                   </div>
 
-                  {/* Image Grid */}
-                  <div className="grid grid-cols-1 gap-4">
-                    {images.map((image, index) => (
+                  {errors.images && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <XCircle className="h-3 w-3" />
+                      {errors.images.message}
+                    </p>
+                  )}
+
+                  <div className="grid grid-cols-1 gap-4 max-h-96 overflow-y-auto">
+                    {watchedImages.map((image, index) => (
                       <div
                         key={index}
-                        className="relative group border rounded-lg overflow-hidden bg-gray-50"
+                        className="relative group border rounded-lg overflow-hidden bg-muted/20 dark:bg-muted/50"
                       >
                         <div className="aspect-video relative">
                           <Image
@@ -585,12 +890,12 @@ export default function EditTour() {
                             alt={`Tour image ${index + 1}`}
                             fill
                             className="object-cover"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            sizes="(max-width: 768px) 100vw, 50vw"
                           />
                         </div>
-                        <div className="p-2">
+                        <div className="p-3">
                           <div className="flex items-center justify-between">
-                            <span className="text-xs text-gray-500 truncate">
+                            <span className="text-sm text-muted-foreground">
                               Image {index + 1}
                             </span>
                             <Button
@@ -602,9 +907,9 @@ export default function EditTour() {
                               className="h-8 w-8 p-0"
                             >
                               {deletingImages.has(index) ? (
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                <Loader2 className="h-3 w-3 animate-spin" />
                               ) : (
-                                <Trash2 className="h-4 w-4" />
+                                <Trash2 className="h-3 w-3" />
                               )}
                             </Button>
                           </div>
@@ -612,10 +917,10 @@ export default function EditTour() {
                       </div>
                     ))}
 
-                    {images.length === 0 && (
-                      <div className="text-center py-8 text-gray-500">
-                        <Upload className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                        <p>No images uploaded yet</p>
+                    {watchedImages.length === 0 && (
+                      <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-lg">
+                        <ImageIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                        <p className="font-medium">No images uploaded yet</p>
                         <p className="text-sm">
                           Upload at least one image to continue
                         </p>
@@ -627,13 +932,16 @@ export default function EditTour() {
             </Card>
 
             {/* Itinerary */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Itinerary</CardTitle>
+            <Card className="shadow-lg">
+              <CardHeader className="bg-secondary text-secondary-foreground rounded-t-lg">
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="h-5 w-5" />
+                  Tour Itinerary *
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="flex gap-2">
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 gap-3">
                     <Input
                       value={newItineraryItem.time}
                       onChange={(e) =>
@@ -642,13 +950,13 @@ export default function EditTour() {
                           time: e.target.value,
                         })
                       }
-                      placeholder="Add time"
+                      placeholder="Time (e.g., 6:00 AM)"
                       onKeyPress={(e) =>
                         e.key === "Enter" &&
-                        (e.preventDefault(), addListItem("itinerary"))
+                        (e.preventDefault(), addItineraryItem())
                       }
                     />
-                    <Input
+                    <Textarea
                       value={newItineraryItem.details}
                       onChange={(e) =>
                         setNewItineraryItem({
@@ -656,152 +964,256 @@ export default function EditTour() {
                           details: e.target.value,
                         })
                       }
-                      placeholder="Add details"
+                      placeholder="Activity details..."
+                      rows={2}
+                    />
+                    <Button
+                      type="button"
+                      onClick={addItineraryItem}
+                      className="w-full"
+                      disabled={
+                        !newItineraryItem.time.trim() ||
+                        !newItineraryItem.details.trim()
+                      }
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Itinerary Item
+                    </Button>
+                  </div>
+
+                  {errors.itinerary && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <XCircle className="h-3 w-3" />
+                      {errors.itinerary.message}
+                    </p>
+                  )}
+
+                  <Separator />
+
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {itineraryFields.map((item, index) => (
+                      <div
+                        key={item.id}
+                        className="flex items-start justify-between bg-muted/50 p-3 rounded-lg"
+                      >
+                        <div className="flex-1">
+                          <div className="font-medium text-sm">{item.time}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {item.details}
+                          </div>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeItinerary(index)}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+
+                    {itineraryFields.length === 0 && (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <Clock className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                        <p>No itinerary items added yet</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Included and Excluded Items */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* What's Included */}
+            <Card className="shadow-lg">
+              <CardHeader className="bg-primary text-primary-foreground rounded-t-lg">
+                <CardTitle className="flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5" />
+                  What&apos;s Included *
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div className="flex gap-2">
+                    <Input
+                      value={newInclusiveItem}
+                      onChange={(e) => setNewInclusiveItem(e.target.value)}
+                      placeholder="Add included item..."
                       onKeyPress={(e) =>
                         e.key === "Enter" &&
-                        (e.preventDefault(), addListItem("itinerary"))
+                        (e.preventDefault(), addInclusiveItem())
                       }
                     />
                     <Button
                       type="button"
-                      size="sm"
-                      onClick={() => addListItem("itinerary")}
+                      onClick={addInclusiveItem}
+                      disabled={!newInclusiveItem.trim()}
                     >
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
-                  <div className="space-y-1">
-                    {itinerary.map((item, index) => (
+
+                  {errors.inclusive && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <XCircle className="h-3 w-3" />
+                      {errors.inclusive.message}
+                    </p>
+                  )}
+
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {inclusiveFields.map((item, index) => (
                       <div
-                        key={index}
-                        className="flex items-center justify-between bg-gray-100 p-2 rounded"
+                        key={item.id}
+                        className="flex items-center justify-between bg-muted/50 p-3 rounded-lg"
                       >
-                        <span className="text-sm">
-                          {item.time} - {item.details}
+                        <span className="text-sm flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-primary" />
+                          {item.value}
                         </span>
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeListItem("itinerary", index)}
+                          onClick={() => removeInclusive(index)}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
                         >
                           <X className="h-3 w-3" />
                         </Button>
                       </div>
                     ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
 
-            {/* Inclusive */}
-            <Card>
-              <CardHeader>
-                <CardTitle>What&apos;s Included</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="flex gap-2">
-                    <Input
-                      value={newInclusiveItem}
-                      onChange={(e) => setNewInclusiveItem(e.target.value)}
-                      placeholder="Add included item"
-                      onKeyPress={(e) =>
-                        e.key === "Enter" &&
-                        (e.preventDefault(), addListItem("inclusive"))
-                      }
-                    />
-                    <Button
-                      type="button"
-                      size="sm"
-                      onClick={() => addListItem("inclusive")}
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <div className="space-y-1">
-                    {inclusive.map((item, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between bg-gray-100 p-2 rounded"
-                      >
-                        <span className="text-sm">{item}</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeListItem("inclusive", index)}
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
+                    {inclusiveFields.length === 0 && (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <CheckCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                        <p>No included items added yet</p>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Exclusive */}
-            <Card>
-              <CardHeader>
-                <CardTitle>What&apos;s Not Included</CardTitle>
+            {/* What's Not Included */}
+            <Card className="shadow-lg">
+              <CardHeader className="bg-destructive text-destructive-foreground rounded-t-lg">
+                <CardTitle className="flex items-center gap-2">
+                  <XCircle className="h-5 w-5" />
+                  What&apos;s Not Included *
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
+              <CardContent className="p-6">
+                <div className="space-y-4">
                   <div className="flex gap-2">
                     <Input
                       value={newExclusiveItem}
                       onChange={(e) => setNewExclusiveItem(e.target.value)}
-                      placeholder="Add excluded item"
+                      placeholder="Add excluded item..."
                       onKeyPress={(e) =>
                         e.key === "Enter" &&
-                        (e.preventDefault(), addListItem("exclusive"))
+                        (e.preventDefault(), addExclusiveItem())
                       }
                     />
                     <Button
                       type="button"
-                      size="sm"
-                      onClick={() => addListItem("exclusive")}
+                      onClick={addExclusiveItem}
+                      disabled={!newExclusiveItem.trim()}
                     >
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
-                  <div className="space-y-1">
-                    {exclusive.map((item, index) => (
+
+                  {errors.exclusive && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <XCircle className="h-3 w-3" />
+                      {errors.exclusive.message}
+                    </p>
+                  )}
+
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {exclusiveFields.map((item, index) => (
                       <div
-                        key={index}
-                        className="flex items-center justify-between bg-gray-100 p-2 rounded"
+                        key={item.id}
+                        className="flex items-center justify-between bg-muted/50 p-3 rounded-lg"
                       >
-                        <span className="text-sm">{item}</span>
+                        <span className="text-sm flex items-center gap-2">
+                          <XCircle className="h-4 w-4 text-destructive" />
+                          {item.value}
+                        </span>
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeListItem("exclusive", index)}
+                          onClick={() => removeExclusive(index)}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
                         >
                           <X className="h-3 w-3" />
                         </Button>
                       </div>
                     ))}
+
+                    {exclusiveFields.length === 0 && (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <XCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                        <p>No excluded items added yet</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Submit Button */}
-          <div className="flex justify-end gap-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.back()}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={saving}>
-              {saving ? "Updating..." : "Update Tour"}
-            </Button>
-          </div>
+          {/* Submit Actions */}
+          <Card className="shadow-lg">
+            <CardContent className="p-6">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  {isDirty ? (
+                    <>
+                      <AlertCircle className="h-4 w-4 text-primary" />
+                      You have unsaved changes
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      All changes saved
+                    </>
+                  )}
+                </div>
+                <div className="flex gap-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => router.back()}
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="min-w-[120px]"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Updating...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-4 w-4 mr-2" />
+                        Update Tour
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </form>
       </div>
     </div>

@@ -185,7 +185,7 @@ export default function AdminDashboard() {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-gray-50">
+      <div className="flex min-h-screen w-full">
         {/* Sidebar */}
         <Sidebar className="hidden lg:block">
           <SidebarHeader>
@@ -246,10 +246,10 @@ export default function AdminDashboard() {
             <div className="flex items-center gap-4">
               <SidebarTrigger className="lg:hidden" />
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                <h1 className="text-2xl sm:text-3xl font-bold text-primary">
                   Tour Management
                 </h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm mt-1">
                   Manage your hiking tours and bookings
                 </p>
               </div>
@@ -268,32 +268,30 @@ export default function AdminDashboard() {
 
           {/* Dashboard Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
-            <Card className="bg-white shadow-sm">
+            <Card className="bg-primary/20 shadow-sm">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
+                <CardTitle className="text-sm font-medium text-primary">
                   Total Tours
                 </CardTitle>
-                <MapPin className="h-4 w-4 text-green-600" />
+                <MapPin className="h-4 w-4 text-primary" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">
-                  {tours.length}
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <div className="text-2xl font-bold">{tours.length}</div>
+                <p className="text-xs text-foreground/60 mt-1">
                   Active tour packages
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-white shadow-sm">
+            <Card className="bg-primary/20 shadow-sm">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
+                <CardTitle className="text-sm font-medium text-primary">
                   Avg Rating
                 </CardTitle>
                 <Star className="h-4 w-4 text-yellow-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-2xl font-bold">
                   {tours.length > 0
                     ? (
                         tours.reduce((sum, tour) => sum + tour.rating, 0) /
@@ -301,7 +299,7 @@ export default function AdminDashboard() {
                       ).toFixed(1)
                     : "0"}
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-foreground/60 mt-1">
                   Average tour rating
                 </p>
               </CardContent>
@@ -309,26 +307,22 @@ export default function AdminDashboard() {
           </div>
 
           {/* Tours Management */}
-          <Card className="bg-white shadow-sm">
+          <Card className="shadow-sm bg-primary/10">
             <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <CardTitle className="text-lg font-semibold text-gray-900">
+                <CardTitle className="text-lg font-semibold text-primary">
                   All Tours
                 </CardTitle>
-                <p className="text-sm text-gray-600 mt-1">
-                  Manage your tour listings
-                </p>
+                <p className="text-sm mt-1">Manage your tour listings</p>
               </div>
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y divide-gray-100">
                 {tours.length === 0 ? (
                   <div className="text-center py-12 px-4">
-                    <MapPin className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No tours found
-                    </h3>
-                    <p className="text-gray-500 mb-4">
+                    <MapPin className="h-12 w-12 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium mb-2">No tours found</h3>
+                    <p className="mb-4">
                       Get started by creating your first tour!
                     </p>
                     <Button
@@ -343,7 +337,7 @@ export default function AdminDashboard() {
                   tours.map((tour) => (
                     <div
                       key={tour.id}
-                      className="p-4 sm:p-6 hover:bg-gray-50 transition-colors"
+                      className="p-4 sm:p-6 hover:bg-primary/30 transition-colors"
                     >
                       <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                         {/* Tour Image and Basic Info */}
@@ -372,7 +366,7 @@ export default function AdminDashboard() {
                               {formatDate(tour.date)}
                             </p>
                             <div className="flex flex-wrap items-center gap-1 mt-2">
-                              <Badge variant="secondary" className="text-xs">
+                              <Badge variant="default" className="text-xs">
                                 {tour.difficulty}
                               </Badge>
                               <Badge variant="outline" className="text-xs">
@@ -381,67 +375,6 @@ export default function AdminDashboard() {
                               <Badge variant="outline" className="text-xs">
                                 {tour.hikeType}
                               </Badge>
-                            </div>
-
-                            {/* Inclusive and Exclusive Features */}
-                            <div className="mt-3 space-y-2">
-                              {tour.inclusive && tour.inclusive.length > 0 && (
-                                <div>
-                                  <p className="text-xs font-medium text-green-700 mb-1">
-                                    Included:
-                                  </p>
-                                  <div className="flex flex-wrap gap-1">
-                                    {tour.inclusive
-                                      .slice(0, 3)
-                                      .map((item, index) => (
-                                        <Badge
-                                          key={index}
-                                          variant="outline"
-                                          className="text-xs bg-green-50 text-green-700 border-green-200"
-                                        >
-                                          ✓ {item}
-                                        </Badge>
-                                      ))}
-                                    {tour.inclusive.length > 3 && (
-                                      <Badge
-                                        variant="outline"
-                                        className="text-xs bg-green-50 text-green-700 border-green-200"
-                                      >
-                                        +{tour.inclusive.length - 3} more
-                                      </Badge>
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-
-                              {tour.exclusive && tour.exclusive.length > 0 && (
-                                <div>
-                                  <p className="text-xs font-medium text-red-700 mb-1">
-                                    Excluded:
-                                  </p>
-                                  <div className="flex flex-wrap gap-1">
-                                    {tour.exclusive
-                                      .slice(0, 2)
-                                      .map((item, index) => (
-                                        <Badge
-                                          key={index}
-                                          variant="outline"
-                                          className="text-xs bg-red-50 text-red-700 border-red-200"
-                                        >
-                                          ✗ {item}
-                                        </Badge>
-                                      ))}
-                                    {tour.exclusive.length > 2 && (
-                                      <Badge
-                                        variant="outline"
-                                        className="text-xs bg-red-50 text-red-700 border-red-200"
-                                      >
-                                        +{tour.exclusive.length - 2} more
-                                      </Badge>
-                                    )}
-                                  </div>
-                                </div>
-                              )}
                             </div>
                           </div>
                         </div>

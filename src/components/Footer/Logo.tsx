@@ -1,5 +1,5 @@
 import Image from "next/image";
-import logo from "./../../../public/image/tumaini hikers bg-01.png";
+import logo from "./../../../public/image/icon.png";
 
 const Logo = () => {
   return (

@@ -1,9 +1,9 @@
-import { Button } from "../ui/button";
-import MainNav from "./MainNav";
-import MobileNav from "./MobileNav";
-import logo from "./../../../public/image/tumaini hikers bg-01.png";
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "../ui/button";
+import logo from "./../../../public/image/icon.png";
+import MainNav from "./MainNav";
+import MobileNav from "./MobileNav";
 import { ModeToggle } from "./ThemeToggle";
 
 const Navbar = () => {
