@@ -35,10 +35,10 @@ function WhyChooseUs() {
           <span className="w-2 h-2 bg-greenPrimary rounded-full mr-2"></span>
           Why Choose Us
         </div>
-        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
           Your Adventure Partner
         </h2>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        <p className="text-lg text-foreground/70 max-w-3xl mx-auto leading-relaxed">
           Choose Tumaini Fitness for your next adventure, where we blend
           expertise and passion to offer unforgettable hiking experiences that
           invigorate your body and enrich your spirit.
@@ -53,13 +53,13 @@ function WhyChooseUs() {
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="group p-6 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-xl 
+                className="group p-6 rounded-2xl bg-primary/40 border border-gray-100 shadow-sm hover:shadow-xl 
                           transition-all duration-300 hover:-translate-y-2"
               >
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0">
                     <div
-                      className="w-12 h-12 rounded-xl bg-gradient-to-br from-greenPrimary to-deepBlue 
+                      className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/50 
                                   flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
                     >
                       {feature.icon}
@@ -67,12 +67,12 @@ function WhyChooseUs() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3
-                      className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-greenPrimary 
+                      className="text-lg font-semibold text-foreground mb-2 group-hover:text-greenPrimary 
                                   transition-colors duration-300"
                     >
                       {feature.title}
                     </h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
+                    <p className="text-sm text-foreground leading-relaxed">
                       {feature.description}
                     </p>
                   </div>
@@ -87,11 +87,11 @@ function WhyChooseUs() {
               <div className="w-8 h-8 rounded-full bg-greenPrimary flex items-center justify-center">
                 <span className="text-white text-sm font-bold">✓</span>
               </div>
-              <h4 className="text-lg font-semibold text-gray-900">
+              <h4 className="text-lg font-semibold text-foreground/70">
                 Commitment to Excellence
               </h4>
             </div>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="leading-relaxed">
               Our dedication to safety, personal growth, and environmental
               stewardship ensures that every trek creates lasting memories while
               respecting nature.

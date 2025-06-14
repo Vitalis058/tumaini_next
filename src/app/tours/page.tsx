@@ -7,6 +7,10 @@ import {
 import { Tour } from "@prisma/client";
 import { Metadata } from "next";
 
+// Force dynamic rendering and revalidate every 60 seconds
+export const revalidate = 60;
+export const dynamic = "force-dynamic";
+
 // Generate metadata for SEO
 export async function generateMetadata(): Promise<Metadata> {
   try {

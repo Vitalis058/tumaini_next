@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Logo from "./Logo";
 import Social from "./Social";
 import UsefulLinks from "./UsefulLinks";
@@ -19,8 +20,8 @@ const Footer = () => {
         </div>
       </div>
       <div className="h-[50px] w-full items-center bg-card text-sm md:text-base text-center">
-        © {new Date().getFullYear()} Copyrights by Tumaini Fitness Adventures.
-        All Rights Reserved
+        <Link href={"/admin/dashboard"}>©</Link> {new Date().getFullYear()}{" "}
+        Copyrights by Tumaini Fitness Adventures. All Rights Reserved
       </div>
     </footer>
   );

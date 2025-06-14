@@ -1,5 +1,5 @@
 import { Tour } from "@prisma/client";
-import { Calendar, MapPin, Star, Users } from "lucide-react";
+import { Calendar, MapPin, Mountain, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { AspectRatio } from "../ui/aspect-ratio";
@@ -19,8 +19,8 @@ function TourCard({ tour }: Props) {
 
   return (
     <div
-      className="group relative bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl 
-                    transition-all duration-300 hover:-translate-y-1 border border-gray-100"
+      className="group relative bg-primary/20 rounded-xl overflow-hidden shadow-md hover:shadow-xl 
+                    transition-all duration-300 hover:-translate-y-1"
     >
       {/* Image Section */}
       <Link href={`/tour-details/${tour.id}`} className="block relative">
@@ -60,7 +60,7 @@ function TourCard({ tour }: Props) {
         {/* Title */}
         <Link href={`/tour-details/${tour.id}`}>
           <h3
-            className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-greenPrimary 
+            className="text-lg font-bold text-foreground line-clamp-1 group-hover:text-greenPrimary 
                         transition-colors duration-300 cursor-pointer"
           >
             {tour.tourName}
@@ -68,9 +68,9 @@ function TourCard({ tour }: Props) {
         </Link>
 
         {/* Tour Details - Compact Grid */}
-        <div className="grid grid-cols-2 gap-2 text-xs text-gray-500">
+        <div className="grid grid-cols-2 gap-2 text-xs text-foreground">
           <div className="flex items-center gap-1">
-            <Calendar className="w-3 h-3 text-deepBlue" />
+            <Calendar className="w-3 h-3 text-primary" />
             <span>
               {new Date(tour.date).toLocaleDateString("en-US", {
                 month: "short",
@@ -80,26 +80,21 @@ function TourCard({ tour }: Props) {
           </div>
 
           <div className="flex items-center gap-1">
-            <MapPin className="w-3 h-3 text-deepBlue" />
+            <MapPin className="w-3 h-3 text-text-primary" />
             <span className="truncate">{tour.location}</span>
           </div>
 
           <div className="flex items-center gap-1">
-            <Users className="w-3 h-3 text-deepBlue" />
-            <span>{tour.booking} bookings</span>
+            <Mountain className="w-3 h-3 text-primary" />
+            <span>{tour.level}</span>
           </div>
 
-          <div className="text-right">
-            <span className="text-sm font-bold text-gray-900">
+          <div className="ml-5">
+            <span className="text-sm font-bold text-foreground">
               KES {tour.price.toLocaleString()}
             </span>
           </div>
         </div>
-
-        {/* Summary */}
-        <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed">
-          {tour.summary}
-        </p>
 
         {/* CTA Button */}
         <Link href={`/tour-details/${tour.id}`} className="block">

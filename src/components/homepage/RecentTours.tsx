@@ -10,12 +10,17 @@ import HomePageSkeleton from "./HomePageSkeleton";
 import TourCard from "./TourCard";
 
 const RecentTours = () => {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["recent-tours"],
     queryFn: async () => {
       const response = await axios.get("/api/tours/recentTours");
       return response.data;
     },
+    staleTime: 30 * 1000, // 30 seconds
+    refetchInterval: 60 * 1000, // Refetch every minute
+    refetchOnWindowFocus: true, // Refetch when user returns to tab
+    refetchOnMount: true, // Always refetch on component mount
+    retry: 3, // Retry failed requests
   });
 
   if (isLoading) {
@@ -26,18 +31,45 @@ const RecentTours = () => {
     );
   }
 
+  // Handle error state
+  if (error) {
+    console.error("Error fetching recent tours:", error);
+    return (
+      <section className="relative">
+        <div className="text-center py-16">
+          <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gray-100 flex items-center justify-center">
+            <span className="text-3xl">⚠️</span>
+          </div>
+          <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+            Unable to Load Tours
+          </h3>
+          <p className="text-gray-600 mb-8">
+            We&apos;re having trouble loading our tours. Please try refreshing
+            the page.
+          </p>
+          <Button
+            className="bg-greenPrimary hover:bg-greenPrimary/90 text-white px-6 py-3 rounded-full"
+            onClick={() => window.location.reload()}
+          >
+            Refresh Page
+          </Button>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="relative">
       {/* Section Header */}
       <div className="text-center mb-16">
-        <div className="inline-flex items-center px-4 py-2 rounded-full bg-deepBlue/10 text-deepBlue text-sm font-medium mb-4">
-          <span className="w-2 h-2 bg-deepBlue rounded-full mr-2"></span>
+        <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/20 text-foreground text-sm font-medium mb-4">
+          <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
           Upcoming Adventures
         </div>
-        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+        <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-6">
           Ready for Your Next Hike?
         </h2>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed mb-8">
+        <p className="text-medium text-foreground/70 max-w-3xl mx-auto mb-8">
           Discover our carefully curated hiking experiences designed to
           challenge, inspire, and connect you with Kenya&apos;s most
           breathtaking landscapes.
@@ -48,13 +80,10 @@ const RecentTours = () => {
       <div className="space-y-8">
         {data?.length === 0 && !isLoading ? (
           <div className="text-center py-16">
-            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gray-100 flex items-center justify-center">
-              <span className="text-3xl">🏔️</span>
-            </div>
             <h3 className="text-2xl font-semibold text-gray-900 mb-4">
               No Tours Available
             </h3>
-            <p className="text-gray-600 mb-8">
+            <p className="text-foreground mb-8">
               We&apos;re currently planning exciting new adventures. Check back
               soon!
             </p>

@@ -58,7 +58,10 @@ const ToursClient = ({ initialTours }: ToursClientProps) => {
       return response.data as Tour[];
     },
     initialData: initialTours,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 30 * 1000, // 30 seconds instead of 5 minutes
+    refetchInterval: 60 * 1000, // Refetch every minute
+    refetchOnWindowFocus: true, // Refetch when user returns to tab
+    refetchOnMount: true, // Always refetch on component mount
   });
 
   // Filter and sort tours
@@ -149,10 +152,9 @@ const ToursClient = ({ initialTours }: ToursClientProps) => {
         <div className="max-w-7xl mx-auto px-4 py-16 sm:py-24">
           <div className="text-center space-y-6">
             <div className="space-y-4">
-              <Badge variant="secondary" className="text-sm font-medium">
-                <Mountain className="w-4 h-4 mr-2" />
+              <div className="text-sm font-medium py-2 px-3 bg-primary/50 rounded-full w-fit mx-auto">
                 Discover Kenya&apos;s Best Hiking Adventures
-              </Badge>
+              </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
                 Explore Our
                 <span className="text-primary block">Adventure Tours</span>

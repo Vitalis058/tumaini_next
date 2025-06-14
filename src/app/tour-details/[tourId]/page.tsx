@@ -8,6 +8,10 @@ import {
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+// Force dynamic rendering and revalidate every 60 seconds
+export const revalidate = 60;
+export const dynamic = "force-dynamic";
+
 interface Props {
   params: Promise<{ tourId: string }>;
 }
@@ -51,23 +55,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: "Tour Details | Tumaini Fitness",
       description: "Discover amazing hiking tours with Tumaini Fitness.",
     };
-  }
-}
-
-// Generate static params for better performance
-export async function generateStaticParams() {
-  try {
-    const tours = await prisma.tour.findMany({
-      select: { id: true },
-      take: 50, // Limit to most recent tours for build performance
-    });
-
-    return tours.map((tour) => ({
-      tourId: tour.id,
-    }));
-  } catch (error) {
-    console.error("Error generating static params:", error);
-    return [];
   }
 }
 

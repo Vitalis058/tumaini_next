@@ -2,7 +2,6 @@
   "name": "tumaini_next",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -29,6 +28,7 @@
     "@radix-ui/react-toast": "^1.2.2",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@react-email/components": "^0.0.28",
+    "@tailwindcss/postcss": "^4.1.10",
     "@tanstack/react-query": "^5.61.5",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.9",
@@ -68,7 +68,7 @@
     "eslint-config-next": "14.2.16",
     "postcss": "^8",
     "prettier": "^3.3.3",
-    "tailwindcss": "^3.4.1",
+    "tailwindcss": "^3.4.17",
     "ts-node": "^10.9.2",
     "typescript": "^5"
   }

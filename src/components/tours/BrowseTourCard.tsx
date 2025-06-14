@@ -62,7 +62,7 @@ const BrowseTourCard = ({ tour }: Props) => {
   };
 
   return (
-    <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 border-0 shadow-sm hover:shadow-xl">
+    <Card className="group overflow-hidden transition-all duration-300 border-0 shadow-sm hover:shadow-xl border border-transparent hover:border-primary">
       <Link href={`/tour-details/${tour.id}`} className="block">
         <div className="grid md:grid-cols-[300px_1fr] gap-0">
           {/* Image Section */}
@@ -77,9 +77,11 @@ const BrowseTourCard = ({ tour }: Props) => {
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 
             {/* Floating Rating */}
-            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1">
+            <div className="absolute top-4 right-4 bg-white/70 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1">
               <Star className="w-4 h-4 text-yellow-500 fill-current" />
-              <span className="text-sm font-semibold">{tour.rating}</span>
+              <span className="text-sm text-primary font-semibold">
+                {tour.rating}
+              </span>
             </div>
 
             {/* Price Badge */}

@@ -1,5 +1,6 @@
 import { getAdminFromRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(
@@ -29,6 +30,17 @@ export async function DELETE(
       where: { id: tourId },
     });
 
+    // Revalidate relevant pages to update cached data
+    try {
+      revalidatePath("/tours");
+      revalidatePath(`/tour-details/${tourId}`);
+      revalidatePath("/"); // For hero section
+      revalidateTag("tours"); // Revalidate any tagged tour data
+    } catch (revalidateError) {
+      console.error("Revalidation error:", revalidateError);
+      // Don't fail the request if revalidation fails
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Delete tour error:", error);
@@ -54,7 +66,17 @@ export async function GET(
       return NextResponse.json({ error: "Tour not found" }, { status: 404 });
     }
 
-    return NextResponse.json(tour);
+    const response = NextResponse.json(tour);
+
+    // Add cache control headers to ensure fresh data
+    response.headers.set(
+      "Cache-Control",
+      "no-cache, no-store, must-revalidate"
+    );
+    response.headers.set("Pragma", "no-cache");
+    response.headers.set("Expires", "0");
+
+    return response;
   } catch (error) {
     console.error("Get tour error:", error);
     return NextResponse.json(
@@ -126,6 +148,17 @@ export async function PUT(
         exclusive: exclusive || [],
       },
     });
+
+    // Revalidate relevant pages to update cached data
+    try {
+      revalidatePath("/tours");
+      revalidatePath(`/tour-details/${tourId}`);
+      revalidatePath("/"); // For hero section
+      revalidateTag("tours"); // Revalidate any tagged tour data
+    } catch (revalidateError) {
+      console.error("Revalidation error:", revalidateError);
+      // Don't fail the request if revalidation fails
+    }
 
     return NextResponse.json(updatedTour);
   } catch (error) {

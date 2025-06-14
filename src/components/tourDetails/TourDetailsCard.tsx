@@ -10,11 +10,9 @@ import {
   Camera,
   Check,
   Clock,
-  Heart,
   Mail,
   MapPin,
   Mountain,
-  Share2,
   Shield,
   Star,
   Users,
@@ -396,7 +394,7 @@ const TourDetailsCard = ({ tour }: Props) => {
                         KES {tour.price.toLocaleString()}
                       </div>
                     </div>
-                    <div className="text-center p-4 rounded-lg bg-secondary text-secondary-foreground">
+                    <div className="text-center p-4 rounded-lg bg-primary/30 text-secondary-foreground">
                       <div className="text-sm font-medium">Booking Fee</div>
                       <div className="text-2xl font-bold">
                         KES {tour.booking.toLocaleString()}
@@ -407,24 +405,6 @@ const TourDetailsCard = ({ tour }: Props) => {
                   <Separator />
 
                   {/* Quick Stats */}
-                  <div className="grid grid-cols-2 gap-4 text-center">
-                    <div>
-                      <div className="text-2xl font-bold text-primary">
-                        {tour.rating}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        Rating
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-primary">
-                        {tour.hikeType === "day-hike" ? "1" : "2+"}
-                      </div>
-                      <div className="text-sm text-muted-foreground">Days</div>
-                    </div>
-                  </div>
-
-                  <Separator />
 
                   {/* Payment Methods */}
                   <div className="space-y-4">
@@ -467,18 +447,6 @@ const TourDetailsCard = ({ tour }: Props) => {
                       <TourBooking tourName={tour.tourName} />
                     </Dialog>
                   </div>
-
-                  {/* Additional Actions */}
-                  <div className="flex gap-2 pt-4">
-                    <Button variant="ghost" size="sm" className="flex-1">
-                      <Heart className="w-4 h-4 mr-2" />
-                      Save
-                    </Button>
-                    <Button variant="ghost" size="sm" className="flex-1">
-                      <Share2 className="w-4 h-4 mr-2" />
-                      Share
-                    </Button>
-                  </div>
                 </CardContent>
               </Card>
 
@@ -490,7 +458,7 @@ const TourDetailsCard = ({ tour }: Props) => {
                 <CardContent>
                   <div className="flex items-center gap-4">
                     <Avatar className="w-12 h-12">
-                      <AvatarImage src="/guide-avatar.jpg" />
+                      <AvatarImage src="./../../app/icon.png" />
                       <AvatarFallback>TF</AvatarFallback>
                     </Avatar>
                     <div>

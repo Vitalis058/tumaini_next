@@ -35,14 +35,14 @@ const Safety = () => {
     <section className="relative">
       {/* Section Header */}
       <div className="text-center mb-16">
-        <div className="inline-flex items-center px-4 py-2 rounded-full bg-deepBlue/10 text-deepBlue text-sm font-medium mb-4">
+        <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
           <Shield className="w-4 h-4 mr-2" />
           Safety First
         </div>
-        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
           At the Heart of Our Adventures
         </h2>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        <p className="text-lg max-w-3xl mx-auto leading-relaxed">
           Your safety is our top priority. We&apos;ve built comprehensive safety
           measures and protocols to ensure every adventure is both thrilling and
           secure.
@@ -62,7 +62,7 @@ const Safety = () => {
                 <div className="flex items-center gap-4 text-left">
                   <div className="flex-shrink-0">
                     <div
-                      className="w-12 h-12 rounded-xl bg-gradient-to-br from-greenPrimary to-deepBlue 
+                      className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/30 
                                   flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
                     >
                       {feature.icon}
@@ -70,7 +70,7 @@ const Safety = () => {
                   </div>
                   <div className="flex-1">
                     <h3
-                      className="text-xl font-semibold text-gray-900 group-hover:text-greenPrimary 
+                      className="text-xl font-semibold group-hover:text-greenPrimary 
                                   transition-colors duration-300"
                     >
                       {feature.title}
@@ -80,9 +80,7 @@ const Safety = () => {
               </AccordionTrigger>
               <AccordionContent className="px-8 pb-6">
                 <div className="ml-16">
-                  <p className="text-gray-600 leading-relaxed">
-                    {feature.content}
-                  </p>
+                  <p className="leading-relaxed">{feature.content}</p>
                 </div>
               </AccordionContent>
             </AccordionItem>
@@ -95,10 +93,10 @@ const Safety = () => {
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-greenPrimary flex items-center justify-center">
               <Shield className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            <h3 className="text-2xl font-bold mb-4 text-primary">
               Comprehensive Safety Protocol
             </h3>
-            <p className="text-gray-600 leading-relaxed max-w-2xl mx-auto">
+            <p className="leading-relaxed max-w-2xl mx-auto">
               Beyond our core safety measures, we conduct thorough risk
               assessments, provide safety briefings, maintain emergency
               communication systems, and carry comprehensive first aid equipment
