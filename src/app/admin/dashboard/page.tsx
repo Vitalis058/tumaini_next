@@ -54,6 +54,8 @@ interface Tour {
   summary: string;
   createdAt: string;
   updatedAt: string;
+  inclusive?: string[];
+  exclusive?: string[];
 }
 
 const menuItems = [
@@ -73,6 +75,24 @@ const menuItems = [
     icon: Settings,
   },
 ];
+
+// Format price in KSH
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat("en-KE", {
+    style: "currency",
+    currency: "KES",
+    minimumFractionDigits: 0,
+  }).format(price);
+};
+
+// Format date
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
 
 export default function AdminDashboard() {
   const [admin, setAdmin] = useState<Admin | null>(null);
@@ -150,8 +170,11 @@ export default function AdminDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading dashboard...</p>
+        </div>
       </div>
     );
   }
@@ -162,8 +185,9 @@ export default function AdminDashboard() {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full">
-        <Sidebar>
+      <div className="flex min-h-screen w-full bg-gray-50">
+        {/* Sidebar */}
+        <Sidebar className="hidden lg:block">
           <SidebarHeader>
             <div className="flex items-center gap-2 px-4 py-2">
               <MapPin className="h-6 w-6 text-green-600" />
@@ -215,38 +239,61 @@ export default function AdminDashboard() {
           </SidebarFooter>
         </Sidebar>
 
-        <main className="flex-1 p-6">
-          <div className="flex items-center gap-4 mb-6">
-            <SidebarTrigger />
-            <h1 className="text-3xl font-bold">Tour Management</h1>
+        {/* Main Content */}
+        <main className="flex-1 p-3 sm:p-4 lg:p-6 overflow-x-hidden">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="lg:hidden" />
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                  Tour Management
+                </h1>
+                <p className="text-sm text-gray-600 mt-1">
+                  Manage your hiking tours and bookings
+                </p>
+              </div>
+            </div>
+            <div className="sm:ml-auto">
+              <Button
+                onClick={() => router.push("/admin/tours/create")}
+                className="w-full sm:w-auto flex items-center gap-2 bg-green-600 hover:bg-green-700"
+              >
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:inline">Add New Tour</span>
+                <span className="sm:hidden">Add Tour</span>
+              </Button>
+            </div>
           </div>
 
           {/* Dashboard Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <Card className="bg-white shadow-sm">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="text-sm font-medium text-gray-600">
                   Total Tours
                 </CardTitle>
-                <MapPin className="h-4 w-4 text-muted-foreground" />
+                <MapPin className="h-4 w-4 text-green-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{tours.length}</div>
-                <p className="text-xs text-muted-foreground">
+                <div className="text-2xl font-bold text-gray-900">
+                  {tours.length}
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
                   Active tour packages
                 </p>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-white shadow-sm">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="text-sm font-medium text-gray-600">
                   Avg Rating
                 </CardTitle>
-                <Star className="h-4 w-4 text-muted-foreground" />
+                <Star className="h-4 w-4 text-yellow-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className="text-2xl font-bold text-gray-900">
                   {tours.length > 0
                     ? (
                         tours.reduce((sum, tour) => sum + tour.rating, 0) /
@@ -254,108 +301,195 @@ export default function AdminDashboard() {
                       ).toFixed(1)
                     : "0"}
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-gray-500 mt-1">
                   Average tour rating
                 </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Total Bookings
-                </CardTitle>
-                <MapPin className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {tours.reduce((sum, tour) => sum + tour.booking, 0)}
-                </div>
-                <p className="text-xs text-muted-foreground">Total bookings</p>
               </CardContent>
             </Card>
           </div>
 
           {/* Tours Management */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>All Tours</CardTitle>
-              <Button
-                onClick={() => router.push("/admin/tours/create")}
-                className="flex items-center gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                Add New Tour
-              </Button>
+          <Card className="bg-white shadow-sm">
+            <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <CardTitle className="text-lg font-semibold text-gray-900">
+                  All Tours
+                </CardTitle>
+                <p className="text-sm text-gray-600 mt-1">
+                  Manage your tour listings
+                </p>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+            <CardContent className="p-0">
+              <div className="divide-y divide-gray-100">
                 {tours.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <MapPin className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>No tours found. Create your first tour!</p>
+                  <div className="text-center py-12 px-4">
+                    <MapPin className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      No tours found
+                    </h3>
+                    <p className="text-gray-500 mb-4">
+                      Get started by creating your first tour!
+                    </p>
+                    <Button
+                      onClick={() => router.push("/admin/tours/create")}
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create First Tour
+                    </Button>
                   </div>
                 ) : (
                   tours.map((tour) => (
                     <div
                       key={tour.id}
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+                      className="p-4 sm:p-6 hover:bg-gray-50 transition-colors"
                     >
-                      <div className="flex items-center gap-4">
-                        {tour.images && tour.images.length > 0 ? (
-                          <Image
-                            src={tour.images[0]}
-                            alt={tour.tourName}
-                            width={64}
-                            height={64}
-                            className="w-16 h-16 rounded-lg object-cover"
-                          />
-                        ) : (
-                          <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center">
-                            <MapPin className="h-6 w-6 text-gray-400" />
-                          </div>
-                        )}
-                        <div>
-                          <h3 className="font-semibold">{tour.tourName}</h3>
-                          <p className="text-sm text-gray-500">
-                            {tour.location}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="secondary">{tour.difficulty}</Badge>
-                            <Badge variant="outline">{tour.level}</Badge>
-                            <Badge variant="outline">{tour.hikeType}</Badge>
+                      <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+                        {/* Tour Image and Basic Info */}
+                        <div className="flex items-start gap-4 flex-1">
+                          {tour.images && tour.images.length > 0 ? (
+                            <Image
+                              src={tour.images[0]}
+                              alt={tour.tourName}
+                              width={80}
+                              height={80}
+                              className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover flex-shrink-0"
+                            />
+                          ) : (
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0">
+                              <MapPin className="h-6 w-6 text-gray-400" />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
+                              {tour.tourName}
+                            </h3>
+                            <p className="text-sm text-gray-500 truncate">
+                              {tour.location}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              {formatDate(tour.date)}
+                            </p>
+                            <div className="flex flex-wrap items-center gap-1 mt-2">
+                              <Badge variant="secondary" className="text-xs">
+                                {tour.difficulty}
+                              </Badge>
+                              <Badge variant="outline" className="text-xs">
+                                {tour.level}
+                              </Badge>
+                              <Badge variant="outline" className="text-xs">
+                                {tour.hikeType}
+                              </Badge>
+                            </div>
+
+                            {/* Inclusive and Exclusive Features */}
+                            <div className="mt-3 space-y-2">
+                              {tour.inclusive && tour.inclusive.length > 0 && (
+                                <div>
+                                  <p className="text-xs font-medium text-green-700 mb-1">
+                                    Included:
+                                  </p>
+                                  <div className="flex flex-wrap gap-1">
+                                    {tour.inclusive
+                                      .slice(0, 3)
+                                      .map((item, index) => (
+                                        <Badge
+                                          key={index}
+                                          variant="outline"
+                                          className="text-xs bg-green-50 text-green-700 border-green-200"
+                                        >
+                                          ✓ {item}
+                                        </Badge>
+                                      ))}
+                                    {tour.inclusive.length > 3 && (
+                                      <Badge
+                                        variant="outline"
+                                        className="text-xs bg-green-50 text-green-700 border-green-200"
+                                      >
+                                        +{tour.inclusive.length - 3} more
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+
+                              {tour.exclusive && tour.exclusive.length > 0 && (
+                                <div>
+                                  <p className="text-xs font-medium text-red-700 mb-1">
+                                    Excluded:
+                                  </p>
+                                  <div className="flex flex-wrap gap-1">
+                                    {tour.exclusive
+                                      .slice(0, 2)
+                                      .map((item, index) => (
+                                        <Badge
+                                          key={index}
+                                          variant="outline"
+                                          className="text-xs bg-red-50 text-red-700 border-red-200"
+                                        >
+                                          ✗ {item}
+                                        </Badge>
+                                      ))}
+                                    {tour.exclusive.length > 2 && (
+                                      <Badge
+                                        variant="outline"
+                                        className="text-xs bg-red-50 text-red-700 border-red-200"
+                                      >
+                                        +{tour.exclusive.length - 2} more
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <p className="font-semibold">${tour.price}</p>
-                          <p className="text-sm text-gray-500">
-                            {tour.booking} bookings
-                          </p>
-                          <div className="flex items-center gap-1 mt-1">
-                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="text-sm">{tour.rating}</span>
+
+                        {/* Stats and Actions */}
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-4 lg:gap-6">
+                          {/* Stats */}
+                          <div className="grid grid-cols-2 gap-4 sm:gap-6 text-center">
+                            <div>
+                              <p className="text-lg sm:text-xl font-bold text-gray-900">
+                                {formatPrice(tour.price)}
+                              </p>
+                              <p className="text-xs text-gray-500">Price</p>
+                            </div>
+                            <div>
+                              <div className="flex items-center justify-center gap-1">
+                                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                <span className="text-lg sm:text-xl font-bold text-gray-900">
+                                  {tour.rating}
+                                </span>
+                              </div>
+                              <p className="text-xs text-gray-500">Rating</p>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              router.push(`/admin/tours/edit/${tour.id}`)
-                            }
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDeleteTour(tour.id)}
-                            className="text-red-600 hover:text-red-700"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+
+                          {/* Actions */}
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                router.push(`/admin/tours/edit/${tour.id}`)
+                              }
+                              className="flex-1 sm:flex-none"
+                            >
+                              <Edit className="h-4 w-4 sm:mr-2" />
+                              <span className="hidden sm:inline">Edit</span>
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDeleteTour(tour.id)}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 flex-1 sm:flex-none"
+                            >
+                              <Trash2 className="h-4 w-4 sm:mr-2" />
+                              <span className="hidden sm:inline">Delete</span>
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </div>

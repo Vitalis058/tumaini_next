@@ -56,8 +56,8 @@ const TourDetailsCard = ({ tour }: Props) => {
       ];
 
   const itinerary = tour.itinerary as ItineraryTypes;
-  const inclusive = tour.inclusive as { item: string }[];
-  const exclusive = tour.exclusive as { item: string }[];
+  const inclusive = tour.inclusive as string[];
+  const exclusive = tour.exclusive as string[];
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -94,6 +94,23 @@ const TourDetailsCard = ({ tour }: Props) => {
         return "bg-red-500 dark:bg-red-600";
       default:
         return "bg-primary";
+    }
+  };
+
+  const getDifficultyMessage = (difficulty: string) => {
+    switch (difficulty.toLowerCase()) {
+      case "easy":
+        return "This is a beginner-friendly hike suitable for most fitness levels. Perfect for families and first-time hikers.";
+      case "moderate":
+        return "This hike requires basic fitness and some hiking experience. Expect moderate inclines and terrain changes.";
+      case "advanced":
+        return "This is a challenging hike requiring good physical fitness and hiking experience. Prepare for steep terrain and longer distances.";
+      case "challenging":
+        return "This hike demands excellent physical condition and extensive hiking experience. Expect difficult terrain, steep climbs, and endurance challenges.";
+      case "strenuous":
+        return "This is an extremely demanding hike for experienced mountaineers only. Requires peak physical fitness, technical skills, and mental resilience.";
+      default:
+        return "Ensure you're prepared for the challenge ahead. Check your fitness level and hiking experience.";
     }
   };
 
@@ -301,29 +318,51 @@ const TourDetailsCard = ({ tour }: Props) => {
 
                   <TabsContent value="included" className="mt-6">
                     <div className="grid gap-3">
-                      {inclusive?.map((item, index) => (
-                        <div
-                          key={index}
-                          className="flex items-start gap-3 p-3 rounded-lg bg-green-50 dark:bg-green-950/20"
-                        >
-                          <Check className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                          <span className="text-sm">{item.item}</span>
+                      {inclusive && inclusive.length > 0 ? (
+                        inclusive.map((item, index) => (
+                          <div
+                            key={index}
+                            className="flex items-start gap-3 p-3 rounded-lg bg-green-50 dark:bg-green-950/20"
+                          >
+                            <Check className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm">{item}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-8 text-muted-foreground">
+                          <Check className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                          <p>No specific inclusions listed for this tour.</p>
+                          <p className="text-xs mt-1">
+                            Contact us for more details about what&apos;s
+                            included.
+                          </p>
                         </div>
-                      ))}
+                      )}
                     </div>
                   </TabsContent>
 
                   <TabsContent value="excluded" className="mt-6">
                     <div className="grid gap-3">
-                      {exclusive?.map((item, index) => (
-                        <div
-                          key={index}
-                          className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-950/20"
-                        >
-                          <X className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
-                          <span className="text-sm">{item.item}</span>
+                      {exclusive && exclusive.length > 0 ? (
+                        exclusive.map((item, index) => (
+                          <div
+                            key={index}
+                            className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-950/20"
+                          >
+                            <X className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm">{item}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-8 text-muted-foreground">
+                          <X className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                          <p>No specific exclusions listed for this tour.</p>
+                          <p className="text-xs mt-1">
+                            Contact us for more details about what&apos;s not
+                            included.
+                          </p>
                         </div>
-                      ))}
+                      )}
                     </div>
                   </TabsContent>
                 </Tabs>
@@ -345,8 +384,7 @@ const TourDetailsCard = ({ tour }: Props) => {
                     <div>
                       <h4 className="font-semibold mb-1">Physical Fitness</h4>
                       <p className="text-sm text-muted-foreground">
-                        This is a {tour.difficulty} level hike. Ensure
-                        you&apos;re physically prepared for the challenge.
+                        {getDifficultyMessage(tour.difficulty)}
                       </p>
                     </div>
                   </div>
@@ -394,7 +432,7 @@ const TourDetailsCard = ({ tour }: Props) => {
                         KES {tour.price.toLocaleString()}
                       </div>
                     </div>
-                    <div className="text-center p-4 rounded-lg bg-primary/30 text-secondary-foreground">
+                    <div className="text-center p-4 rounded-lg bg-primary/30">
                       <div className="text-sm font-medium">Booking Fee</div>
                       <div className="text-2xl font-bold">
                         KES {tour.booking.toLocaleString()}
