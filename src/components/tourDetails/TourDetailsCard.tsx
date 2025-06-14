@@ -488,6 +488,7 @@ const TourDetailsCard = ({ tour }: Props) => {
                                       "Paybill number copied to clipboard",
                                   });
                                 } catch (error) {
+                                  console.log(error);
                                   toast({
                                     title: "Copy failed",
                                     description:
@@ -514,7 +515,8 @@ const TourDetailsCard = ({ tour }: Props) => {
                             <span className="text-green-200">Your Number</span>
                           </div>
                           <p className="text-green-100 text-xs mt-1">
-                            Replace "Your Number" with your phone number
+                            Replace &quot;Your Number&quot; with your phone
+                            number
                           </p>
                         </div>
 
