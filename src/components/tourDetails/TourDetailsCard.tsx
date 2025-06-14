@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Tour } from "@prisma/client";
 import {
@@ -33,7 +34,6 @@ import { Button } from "../ui/button";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import safaricom from "./../../../public/image/Professional Lipa Na Mpesa Banner Flyer (us L - Made with PosterMyWall (4).jpg";
 import TourBooking from "./tourBooking";
 
 type Props = {
@@ -44,6 +44,7 @@ type ItineraryTypes = { time: string; details: string }[];
 
 const TourDetailsCard = ({ tour }: Props) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { toast } = useToast();
 
   // Handle both old imageUrl and new images array
   const images = tour.images
@@ -449,12 +450,96 @@ const TourDetailsCard = ({ tour }: Props) => {
                     <h3 className="font-semibold text-center">
                       Payment Options
                     </h3>
-                    <div className="relative w-full max-w-[200px] mx-auto">
-                      <Image
-                        src={safaricom}
-                        alt="M-Pesa Payment"
-                        className="rounded-lg"
-                      />
+
+                    {/* M-Pesa Payment Component */}
+                    <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-6 text-white shadow-lg">
+                      <div className="flex items-center justify-center mb-4">
+                        <div className="bg-white rounded-lg p-2 mr-3">
+                          <div className="w-8 h-8 bg-green-600 rounded flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">
+                              M
+                            </span>
+                          </div>
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-lg">M-PESA</h4>
+                          <p className="text-green-100 text-sm">
+                            Lipa Na M-PESA
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                          <div className="flex justify-between items-center mb-1">
+                            <span className="text-green-100 text-sm">
+                              Paybill Number
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-white hover:bg-white/20 h-6 px-2 text-xs"
+                              onClick={async () => {
+                                try {
+                                  await navigator.clipboard.writeText("521000");
+                                  toast({
+                                    title: "Copied!",
+                                    description:
+                                      "Paybill number copied to clipboard",
+                                  });
+                                } catch (error) {
+                                  toast({
+                                    title: "Copy failed",
+                                    description:
+                                      "Please copy the number manually: 521000",
+                                    variant: "destructive",
+                                  });
+                                }
+                              }}
+                            >
+                              Copy
+                            </Button>
+                          </div>
+                          <div className="font-mono text-xl font-bold">
+                            521000
+                          </div>
+                        </div>
+
+                        <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                          <div className="text-green-100 text-sm mb-1">
+                            Account Number
+                          </div>
+                          <div className="font-mono text-lg font-semibold">
+                            TFC #
+                            <span className="text-green-200">Your Number</span>
+                          </div>
+                          <p className="text-green-100 text-xs mt-1">
+                            Replace "Your Number" with your phone number
+                          </p>
+                        </div>
+
+                        <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                          <div className="text-green-100 text-sm mb-1">
+                            Amount
+                          </div>
+                          <div className="font-mono text-lg font-semibold">
+                            KES {tour.booking.toLocaleString()}
+                          </div>
+                          <p className="text-green-100 text-xs mt-1">
+                            Booking fee to secure your spot
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 p-3 bg-white/10 rounded-lg backdrop-blur-sm">
+                        <div className="flex items-start gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-green-200 mt-2 flex-shrink-0"></div>
+                          <p className="text-green-100 text-xs">
+                            After payment, send the M-PESA confirmation message
+                            via WhatsApp for booking confirmation
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
 

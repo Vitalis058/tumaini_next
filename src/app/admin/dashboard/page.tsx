@@ -17,16 +17,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import {
-  Edit,
-  Home,
-  LogOut,
-  MapPin,
-  Plus,
-  Settings,
-  Star,
-  Trash2,
-} from "lucide-react";
+import { Edit, Home, LogOut, MapPin, Plus, Star, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -63,16 +54,6 @@ const menuItems = [
     title: "Dashboard",
     url: "/admin/dashboard",
     icon: Home,
-  },
-  {
-    title: "Tours",
-    url: "/admin/tours",
-    icon: MapPin,
-  },
-  {
-    title: "Settings",
-    url: "/admin/settings",
-    icon: Settings,
   },
 ];
 
@@ -356,13 +337,11 @@ export default function AdminDashboard() {
                             </div>
                           )}
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
+                            <h3 className="font-semibold text-sm text-primary sm:text-base truncate">
                               {tour.tourName}
                             </h3>
-                            <p className="text-sm text-gray-500 truncate">
-                              {tour.location}
-                            </p>
-                            <p className="text-xs text-gray-400 mt-1">
+                            <p className="text-sm truncate">{tour.location}</p>
+                            <p className="text-xs mt-1">
                               {formatDate(tour.date)}
                             </p>
                             <div className="flex flex-wrap items-center gap-1 mt-2">
@@ -384,26 +363,25 @@ export default function AdminDashboard() {
                           {/* Stats */}
                           <div className="grid grid-cols-2 gap-4 sm:gap-6 text-center">
                             <div>
-                              <p className="text-lg sm:text-xl font-bold text-gray-900">
+                              <p className="text-lg sm:text-xl font-bold text-primary">
                                 {formatPrice(tour.price)}
                               </p>
-                              <p className="text-xs text-gray-500">Price</p>
+                              <p className="text-xs">Price</p>
                             </div>
                             <div>
                               <div className="flex items-center justify-center gap-1">
                                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                <span className="text-lg sm:text-xl font-bold text-gray-900">
+                                <span className="text-lg sm:text-xl font-bold text-primary">
                                   {tour.rating}
                                 </span>
                               </div>
-                              <p className="text-xs text-gray-500">Rating</p>
+                              <p className="text-xs">Rating</p>
                             </div>
                           </div>
 
                           {/* Actions */}
                           <div className="flex items-center gap-2">
                             <Button
-                              variant="outline"
                               size="sm"
                               onClick={() =>
                                 router.push(`/admin/tours/edit/${tour.id}`)
@@ -414,7 +392,6 @@ export default function AdminDashboard() {
                               <span className="hidden sm:inline">Edit</span>
                             </Button>
                             <Button
-                              variant="outline"
                               size="sm"
                               onClick={() => handleDeleteTour(tour.id)}
                               className="text-red-600 hover:text-red-700 hover:bg-red-50 flex-1 sm:flex-none"
