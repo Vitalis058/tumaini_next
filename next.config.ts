@@ -1,22 +1,36 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
     remotePatterns: [
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
-        port: "", // Leave blank to allow all ports
-        pathname: "/**", // Allows all paths under this hostname
+        port: "",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "images.unsplash.com",
-        port: "", // Leave blank to allow all ports
-        pathname: "/**", // Allows all paths under this hostname
+        port: "",
+        pathname: "/**",
       },
     ],
+  },
+
+  async headers() {
+    return [
+      {
+        // Prevent caching for static JS chunks
+        source: "/_next/static/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-store",
+          },
+        ],
+      },
+    ];
   },
 };
 
