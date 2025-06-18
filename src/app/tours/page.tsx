@@ -1,63 +1,14 @@
+"use client";
+
 import ToursClient from "@/components/tours/ToursClient";
-import prisma from "@/lib/prisma";
-import {
-  generateBreadcrumbSchema,
-  generateMetadata as generateSEOMetadata,
-} from "@/lib/seo";
-import { Tour } from "@prisma/client";
-import { Metadata } from "next";
+import { generateBreadcrumbSchema } from "@/lib/seo";
 
-// Force dynamic rendering and revalidate every 60 seconds
-export const revalidate = 60;
-export const dynamic = "force-dynamic";
-
-// Generate metadata for SEO
-export async function generateMetadata(): Promise<Metadata> {
-  try {
-    const tourCount = await prisma.tour.count();
-
-    return generateSEOMetadata({
-      title: "Hiking Tours in Kenya | Browse All Adventures",
-      description: `Discover ${tourCount}+ hiking tours across Kenya. From Mt Kenya to Aberdares, find the perfect adventure for your skill level. Professional guides, safety equipment included.`,
-      keywords: [
-        "hiking tours Kenya",
-        "Mt Kenya tours",
-        "Aberdares hiking",
-        "adventure tours",
-        "mountain climbing Kenya",
-        "guided hikes",
-        "Kenya tourism",
-        "outdoor adventures",
-      ],
-      url: "/tours",
-    });
-  } catch (error) {
-    console.error("Error generating tours metadata:", error);
-    return generateSEOMetadata({
-      title: "Hiking Tours in Kenya",
-      description:
-        "Discover amazing hiking tours across Kenya with professional guides.",
-      url: "/tours",
-    });
-  }
-}
-
-export default async function ToursPage() {
+export default function ToursPage() {
   // Generate breadcrumb structured data
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Home", url: "/" },
     { name: "Tours", url: "/tours" },
   ]);
-
-  let initialTours: Tour[] = [];
-  try {
-    initialTours = await prisma.tour.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 20, // Load first 20 tours for better performance
-    });
-  } catch (error) {
-    console.error("Error fetching initial tours:", error);
-  }
 
   return (
     <>
@@ -85,7 +36,7 @@ export default async function ToursPage() {
       </nav>
 
       {/* Client Component for Interactive Features */}
-      <ToursClient initialTours={initialTours} />
+      <ToursClient />
     </>
   );
 }

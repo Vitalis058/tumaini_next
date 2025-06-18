@@ -511,7 +511,7 @@ const TourDetailsCard = ({ tour }: Props) => {
                             Account Number
                           </div>
                           <div className="font-mono text-lg font-semibold">
-                            TFC#
+                            TFCre#
                             <span className="text-green-200">Your Number</span>
                           </div>
                           <p className="text-green-100 text-xs mt-1">
